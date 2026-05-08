@@ -10,9 +10,6 @@ import priceRoutes from "./routes/prices.js";
 
 dotenv.config({ path: "./.env" });
 
-console.log("DATA GOV:", process.env.DATA_GOV_API_KEY);
-console.log("WEATHER:", process.env.OPENWEATHER_API_KEY);
-
 const app = express();
 
 app.use(
