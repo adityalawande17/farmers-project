@@ -35,7 +35,7 @@ router.post("/chat", protect, async (req, res) => {
       : SYSTEM_PROMPT;
 
     const response = await anthropic.messages.create({
-      model: "claude-opus-4-5",
+      model: "claude-haiku-4-5-20251001",
       max_tokens: 512,
       system: systemWithContext,
       messages,
@@ -53,7 +53,7 @@ router.post("/crop-advice", protect, async (req, res) => {
     const { crop, issue, weather } = req.body;
 
     const response = await anthropic.messages.create({
-      model: "claude-opus-4-5",
+      model: "claude-haiku-4-5-20251001",
       max_tokens: 400,
       system: SYSTEM_PROMPT,
       messages: [
@@ -76,7 +76,7 @@ router.post("/sell-advice", protect, async (req, res) => {
     const { crop, quantity, currentPrice, priceHistory, location } = req.body;
 
     const response = await anthropic.messages.create({
-      model: "claude-opus-4-5",
+      model: "claude-haiku-4-5-20251001",
       max_tokens: 300,
       system: SYSTEM_PROMPT,
       messages: [

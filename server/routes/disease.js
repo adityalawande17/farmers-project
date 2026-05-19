@@ -1,17 +1,17 @@
-import express from 'express';
-import multer from 'multer';
-import path from 'path';
-import fs from 'fs';
-import Anthropic from '@anthropic-ai/sdk';
-import { protect } from '../middleware/auth.js';
-import Detection from '../models/Detection.js';
+import express from "express";
+import multer from "multer";
+import path from "path";
+import fs from "fs";
+import Anthropic from "@anthropic-ai/sdk";
+import { protect } from "../middleware/auth.js";
+import Detection from "../models/Detection.js";
 
 const router = express.Router();
 const anthropic = new Anthropic({ apiKey: process.env.ANTHROPIC_API_KEY });
 
 const storage = multer.diskStorage({
   destination: (req, file, cb) => {
-    const dir = 'uploads/diseases';
+    const dir = "uploads/diseases";
     if (!fs.existsSync(dir)) fs.mkdirSync(dir, { recursive: true });
     cb(null, dir);
   },
@@ -23,33 +23,40 @@ const upload = multer({
   limits: { fileSize: 5 * 1024 * 1024 },
   fileFilter: (req, file, cb) => {
     const allowed = /jpeg|jpg|png|webp/;
-    if (allowed.test(path.extname(file.originalname).toLowerCase())) cb(null, true);
-    else cb(new Error('Only image files are allowed'));
+    if (allowed.test(path.extname(file.originalname).toLowerCase()))
+      cb(null, true);
+    else cb(new Error("Only image files are allowed"));
   },
 });
 
 // POST /api/disease/detect
-router.post('/detect', protect, upload.single('image'), async (req, res) => {
+router.post("/detect", protect, upload.single("image"), async (req, res) => {
   try {
-    if (!req.file) return res.status(400).json({ message: 'No image uploaded' });
+    if (!req.file)
+      return res.status(400).json({ message: "No image uploaded" });
 
     const imageData = fs.readFileSync(req.file.path);
-    const base64Image = imageData.toString('base64');
+    const base64Image = imageData.toString("base64");
     const mediaType = req.file.mimetype;
 
     const response = await anthropic.messages.create({
-      model: 'claude-opus-4-5',
+      model: "claude-haiku-4-5-20251001",
       max_tokens: 600,
-      messages: [{
-        role: 'user',
-        content: [
-          {
-            type: 'image',
-            source: { type: 'base64', media_type: mediaType, data: base64Image },
-          },
-          {
-            type: 'text',
-            text: `Analyze this crop/plant image as an expert plant pathologist. Respond in JSON format only:
+      messages: [
+        {
+          role: "user",
+          content: [
+            {
+              type: "image",
+              source: {
+                type: "base64",
+                media_type: mediaType,
+                data: base64Image,
+              },
+            },
+            {
+              type: "text",
+              text: `Analyze this crop/plant image as an expert plant pathologist. Respond in JSON format only:
 {
   "disease": "disease name or 'Healthy'",
   "confidence": "High/Medium/Low",
@@ -61,18 +68,19 @@ router.post('/detect', protect, upload.single('image'), async (req, res) => {
   "prevention": ["tip1", "tip2"],
   "organic_solution": "organic treatment option",
   "urgency": "Immediate/Within a week/Monitor"
-}`
-          }
-        ],
-      }],
+}`,
+            },
+          ],
+        },
+      ],
     });
 
     let result;
     try {
       const text = response.content[0].text;
-      result = JSON.parse(text.replace(/```json|```/g, '').trim());
+      result = JSON.parse(text.replace(/```json|```/g, "").trim());
     } catch {
-      result = { disease: 'Analysis complete', raw: response.content[0].text };
+      result = { disease: "Analysis complete", raw: response.content[0].text };
     }
 
     // ✅ Save detection to MongoDB so history is real
@@ -101,7 +109,7 @@ router.post('/detect', protect, upload.single('image'), async (req, res) => {
 });
 
 // GET /api/disease/history — real detections for logged-in user
-router.get('/history', protect, async (req, res) => {
+router.get("/history", protect, async (req, res) => {
   try {
     const detections = await Detection.find({ user: req.user._id })
       .sort({ createdAt: -1 })
