@@ -25,9 +25,9 @@ export default function Login() {
   };
 
   return (
-    <div className="min-h-screen flex bg-gradient-to-br from-green-50 to-emerald-100">
+    <div className="h-screen flex bg-gradient-to-br from-green-50 to-emerald-100">
       {/* Left — form */}
-      <div className="w-full md:w-[520px] shrink-0 flex items-center justify-center px-10 py-10">
+      <div className="w-full md:w-[520px] shrink-0 flex items-center justify-center px-10">
         <div className="w-full max-w-md">
           <div className="text-center mb-8">
             <div className="w-14 h-14 bg-green-500 rounded-tl-full rounded-tr-full rounded-br-full mx-auto mb-3 flex items-center justify-center text-2xl">🌿</div>
