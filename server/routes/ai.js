@@ -1,6 +1,7 @@
 import express from "express";
 import Anthropic from "@anthropic-ai/sdk";
 import { protect } from "../middleware/auth.js";
+import ChatMessage from "../models/ChatMessage.js";
 
 const router = express.Router();
 const anthropic = new Anthropic({ apiKey: process.env.ANTHROPIC_API_KEY });
@@ -27,8 +28,7 @@ Always:
 // POST /api/ai/chat
 router.post("/chat", protect, async (req, res) => {
   try {
-    const { messages, context } = req.body;
-    // context = { crops, location, season }
+    const { messages, context, saveToHistory } = req.body;
 
     const systemWithContext = context
       ? `${SYSTEM_PROMPT}\n\nFarmer context: Location: ${context.location || "India"}, Active crops: ${context.crops?.join(", ") || "unknown"}, Season: ${context.season || "current"}`
@@ -41,7 +41,29 @@ router.post("/chat", protect, async (req, res) => {
       messages,
     });
 
-    res.json({ reply: response.content[0].text });
+    const reply = response.content[0].text;
+
+    if (saveToHistory) {
+      const userMessage = messages[messages.length - 1];
+      await ChatMessage.insertMany([
+        { user: req.user._id, role: userMessage.role, content: userMessage.content },
+        { user: req.user._id, role: "assistant", content: reply },
+      ]);
+    }
+
+    res.json({ reply });
+  } catch (err) {
+    res.status(500).json({ message: err.message });
+  }
+});
+
+// GET /api/ai/history
+router.get("/history", protect, async (req, res) => {
+  try {
+    const messages = await ChatMessage.find({ user: req.user._id })
+      .sort({ createdAt: 1 })
+      .limit(50);
+    res.json(messages);
   } catch (err) {
     res.status(500).json({ message: err.message });
   }

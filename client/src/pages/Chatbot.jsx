@@ -11,15 +11,14 @@ const SUGGESTIONS = [
   "My tomato leaves are turning yellow",
 ];
 
+const GREETING = (name) =>
+  `Namaste ${name || ""} ji! I'm your AI farming assistant. Ask me anything about crops, weather, pests, or government schemes — in Hindi, Marathi, or English!`;
+
 export default function Chatbot() {
   const { user } = useAuth();
   const [cropNames, setCropNames] = useState([]);
-  const [messages, setMessages] = useState([
-    {
-      role: "assistant",
-      content: `Namaste ${user?.name?.split(" ")[0] || ""} ji! I'm your AI farming assistant. Ask me anything about crops, weather, pests, or government schemes — in Hindi, Marathi, or English!`,
-    },
-  ]);
+  const [messages, setMessages] = useState([]);
+  const [historyLoading, setHistoryLoading] = useState(true);
   const [input, setInput] = useState("");
   const [loading, setLoading] = useState(false);
   const bottomRef = useRef(null);
@@ -29,6 +28,26 @@ export default function Chatbot() {
       .get(`${API}/farm/crops`)
       .then((res) => setCropNames(res.data.map((c) => c.name)))
       .catch(() => {});
+  }, []);
+
+  useEffect(() => {
+    axios
+      .get(`${API}/ai/history`)
+      .then((res) => {
+        if (res.data.length > 0) {
+          setMessages(res.data);
+        } else {
+          setMessages([
+            { role: "assistant", content: GREETING(user?.name?.split(" ")[0]) },
+          ]);
+        }
+      })
+      .catch(() => {
+        setMessages([
+          { role: "assistant", content: GREETING(user?.name?.split(" ")[0]) },
+        ]);
+      })
+      .finally(() => setHistoryLoading(false));
   }, []);
 
   useEffect(() => {
@@ -58,6 +77,7 @@ export default function Chatbot() {
       const { data } = await axios.post(`${API}/ai/chat`, {
         messages: recentMsgs,
         context,
+        saveToHistory: true,
       });
       setMessages((prev) => [
         ...prev,
@@ -76,6 +96,8 @@ export default function Chatbot() {
     }
   };
 
+  const hasUserMessages = messages.some((m) => m.role === "user");
+
   return (
     <div className="flex flex-col h-full">
       {/* Header */}
@@ -90,7 +112,19 @@ export default function Chatbot() {
 
       {/* Messages */}
       <div className="flex-1 overflow-y-auto px-6 py-4 flex flex-col gap-3 max-w-3xl w-full mx-auto">
-        {messages.map((msg, i) => (
+        {historyLoading ? (
+          <div className="flex flex-col gap-3 pt-2">
+            {[1, 2, 3].map((i) => (
+              <div
+                key={i}
+                className={`flex ${i % 2 === 0 ? "justify-end" : "justify-start"}`}
+              >
+                <div className={`h-10 rounded-2xl animate-pulse ${i % 2 === 0 ? "bg-green-100 w-48" : "bg-gray-100 w-64"}`} />
+              </div>
+            ))}
+          </div>
+        ) : null}
+        {!historyLoading && messages.map((msg, i) => (
           <div
             key={i}
             className={`flex ${msg.role === "user" ? "justify-end" : "justify-start"}`}
@@ -130,7 +164,7 @@ export default function Chatbot() {
       </div>
 
       {/* Suggestions */}
-      {messages.length <= 2 && (
+      {!historyLoading && !hasUserMessages && (
         <div className="px-6 pb-3 flex gap-2 flex-wrap max-w-3xl mx-auto w-full">
           {SUGGESTIONS.map((s) => (
             <button
