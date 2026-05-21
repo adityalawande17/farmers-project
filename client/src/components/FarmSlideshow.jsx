@@ -1,11 +1,11 @@
 import { useState, useEffect } from "react";
 
 const SLIDES = [
-  "https://images.unsplash.com/photo-1500937386664-56d1dfef3854?auto=format&fit=crop&w=1280&h=720&q=80",
-  "https://images.unsplash.com/photo-1464226184884-fa280b87c399?auto=format&fit=crop&w=1280&h=720&q=80",
-  "https://images.unsplash.com/photo-1416879595882-3373a0480b5b?auto=format&fit=crop&w=1280&h=720&q=80",
-  "https://images.unsplash.com/photo-1560493676-04071c5f467b?auto=format&fit=crop&w=1280&h=720&q=80",
-  "https://images.unsplash.com/photo-1523348837708-15d4a09cfac2?auto=format&fit=crop&w=1280&h=720&q=80",
+  "img1.jpeg",
+  "img2.jpeg",
+  "img3.jpeg",
+  "img4.jpeg",
+  "img5.jpeg",
 ];
 
 export default function FarmSlideshow() {
