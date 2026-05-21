@@ -136,7 +136,7 @@ export default function DiseaseDetector() {
                 onClick={reset}
                 className="absolute top-2 right-2 bg-white text-gray-600 text-xs px-3 py-1 rounded-lg shadow-sm hover:bg-gray-50 border border-gray-200"
               >
-                ✕ Remove
+                Remove
               </button>
             </div>
           )}
@@ -161,7 +161,7 @@ export default function DiseaseDetector() {
               disabled={loading}
               className="w-full mt-4 bg-green-500 hover:bg-green-600 text-white font-medium py-3 rounded-xl text-sm transition-colors disabled:opacity-60"
             >
-              {loading ? " Analyzing image..." : " Detect Disease"}
+              {loading ? "Analyzing image..." : "Detect Disease"}
             </button>
           )}
 
@@ -176,7 +176,6 @@ export default function DiseaseDetector() {
                     <div
                       className={`font-semibold text-sm ${result.disease === "Healthy" ? "text-green-800" : "text-amber-800"}`}
                     >
-                      {result.disease === "Healthy" ? "✅ " : "⚠️ "}
                       {result.disease}
                     </div>
                     {result.affected_part && (
@@ -224,7 +223,7 @@ export default function DiseaseDetector() {
               {result.organic_solution && (
                 <div className="bg-green-50 p-3 rounded-xl">
                   <div className="text-xs font-semibold text-green-800 mb-1">
-                    🌿 Organic Option
+                    Organic Option
                   </div>
                   <p className="text-xs text-green-700">
                     {result.organic_solution}

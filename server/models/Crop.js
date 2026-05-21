@@ -30,7 +30,7 @@ const cropSchema = new mongoose.Schema(
     notes: String,
     season: { type: String, enum: ["kharif", "rabi", "zaid"], required: true },
   },
-  { timestamps: true },
+  { timestamps: true, toJSON: { virtuals: true } },
 );
 
 cropSchema.virtual("totalExpenses").get(function () {

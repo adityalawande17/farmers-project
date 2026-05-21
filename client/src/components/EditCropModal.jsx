@@ -121,7 +121,7 @@ export default function EditCropModal({ crop, onClose, onSaved, onDeleted }) {
             onClick={onClose}
             className="text-gray-400 hover:text-gray-600 text-xl leading-none"
           >
-            ✕
+            ×
           </button>
         </div>
 
@@ -389,7 +389,7 @@ export default function EditCropModal({ crop, onClose, onSaved, onDeleted }) {
                           onClick={() => removeExpense(i)}
                           className="text-gray-300 hover:text-red-400 transition-colors text-sm"
                         >
-                          ✕
+                          ×
                         </button>
                       </div>
                     </div>

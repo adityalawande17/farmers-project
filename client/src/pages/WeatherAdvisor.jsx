@@ -1,7 +1,7 @@
 import { useState, useEffect } from "react";
 import axios from "axios";
-import { API } from "../context/AuthContext";
-import { useAuth } from "../context/AuthContext";
+import { API, useAuth } from "../context/AuthContext";
+import { getCurrentSeason } from "../utils/season";
 
 const WEATHER_ICONS = {
   "clear sky": "☀️",
@@ -31,6 +31,7 @@ const getIcon = (desc = "") => {
 
 export default function WeatherAdvisor() {
   const { user } = useAuth();
+  const [cropNames, setCropNames] = useState([]);
   const [forecast, setForecast] = useState([]);
   const [city, setCity] = useState("");
   const [loading, setLoading] = useState(true);
@@ -40,6 +41,13 @@ export default function WeatherAdvisor() {
   const [question, setQuestion] = useState("");
   const [askAdvice, setAskAdvice] = useState("");
   const [askLoading, setAskLoading] = useState(false);
+
+  useEffect(() => {
+    axios
+      .get(`${API}/farm/crops`)
+      .then((res) => setCropNames(res.data.map((c) => c.name)))
+      .catch(() => {});
+  }, []);
 
   // Fetch real weather using saved coordinates or browser GPS
   useEffect(() => {
@@ -86,7 +94,7 @@ export default function WeatherAdvisor() {
       )
       .join("\n");
 
-    const crops = user?.crops?.join(", ") || "general crops";
+    const crops = cropNames.length ? cropNames.join(", ") : "general crops";
     const location = city || user?.location?.district || "your location";
 
     axios
@@ -107,7 +115,7 @@ Categories to cover: irrigation, spraying/pest, heat/cold stress, and sowing/har
 Return only the JSON array, nothing else.`,
           },
         ],
-        context: { crops: user?.crops || [], location },
+        context: { crops: cropNames, location, season: getCurrentSeason() },
       })
       .then((res) => {
         try {
@@ -144,7 +152,7 @@ Real weather forecast: ${forecastSummary}
 Answer specifically using the actual forecast data above.`,
           },
         ],
-        context: { location: city, crops: user?.crops || [] },
+        context: { location: city, crops: cropNames, season: getCurrentSeason() },
       });
       setAskAdvice(data.reply);
     } catch {

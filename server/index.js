@@ -1,14 +1,12 @@
+import "dotenv/config";
 import express from "express";
 import mongoose from "mongoose";
 import cors from "cors";
-import dotenv from "dotenv";
 import authRoutes from "./routes/auth.js";
 import aiRoutes from "./routes/ai.js";
 import diseaseRoutes from "./routes/disease.js";
 import farmRoutes from "./routes/farm.js";
 import priceRoutes from "./routes/prices.js";
-
-dotenv.config({ path: "./.env" });
 
 const app = express();
 

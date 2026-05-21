@@ -1,6 +1,7 @@
 import { useState, useRef, useEffect } from "react";
 import axios from "axios";
 import { useAuth, API } from "../context/AuthContext";
+import { getCurrentSeason } from "../utils/season";
 
 const SUGGESTIONS = [
   "When should I harvest my wheat?",
@@ -12,15 +13,23 @@ const SUGGESTIONS = [
 
 export default function Chatbot() {
   const { user } = useAuth();
+  const [cropNames, setCropNames] = useState([]);
   const [messages, setMessages] = useState([
     {
       role: "assistant",
-      content: `Namaste ${user?.name?.split(" ")[0] || ""} ji!  I'm your AI farming assistant. Ask me anything about crops, weather, pests, or government schemes — in Hindi, Marathi, or English!`,
+      content: `Namaste ${user?.name?.split(" ")[0] || ""} ji! I'm your AI farming assistant. Ask me anything about crops, weather, pests, or government schemes — in Hindi, Marathi, or English!`,
     },
   ]);
   const [input, setInput] = useState("");
   const [loading, setLoading] = useState(false);
   const bottomRef = useRef(null);
+
+  useEffect(() => {
+    axios
+      .get(`${API}/farm/crops`)
+      .then((res) => setCropNames(res.data.map((c) => c.name)))
+      .catch(() => {});
+  }, []);
 
   useEffect(() => {
     bottomRef.current?.scrollIntoView({ behavior: "smooth" });
@@ -38,9 +47,9 @@ export default function Chatbot() {
 
     try {
       const context = {
-        crops: user?.crops || [],
+        crops: cropNames,
         location: `${user?.location?.district || ""}, ${user?.location?.state || "India"}`,
-        season: "Rabi 2024",
+        season: getCurrentSeason(),
       };
       // Send only last 10 messages to keep context window reasonable
       const recentMsgs = updated

@@ -162,7 +162,7 @@ export default function Register() {
                         ? 'bg-green-50 border-green-300 text-green-800 font-medium'
                         : 'border-gray-200 text-gray-600 hover:bg-gray-50'
                     }`}>
-                    {form.crops.includes(crop) ? '✓ ' : ''}{crop}
+                    {crop}
                   </button>
                 ))}
               </div>
@@ -170,7 +170,7 @@ export default function Register() {
               {/* GPS notice */}
               <div className="bg-blue-50 border border-blue-100 rounded-xl px-4 py-3">
                 <p className="text-xs text-blue-700">
-                  📍 We'll ask for your location when you tap Create Account — this lets us give you accurate weather and market data. You can deny it and it will still work.
+                  We'll ask for your location when you tap Create Account — this lets us give you accurate weather and market data. You can deny it and it will still work.
                 </p>
               </div>
 
@@ -178,7 +178,7 @@ export default function Register() {
                 <button onClick={() => setStep(2)} className="flex-1 border border-gray-200 text-gray-600 font-medium py-3 rounded-xl text-sm hover:bg-gray-50 transition-colors">← Back</button>
                 <button onClick={handleSubmit} disabled={loading}
                   className="flex-1 bg-green-500 hover:bg-green-600 text-white font-medium py-3 rounded-xl text-sm transition-colors disabled:opacity-60">
-                  {loading ? 'Getting location...' : 'Create Account 🌱'}
+                  {loading ? 'Getting location...' : 'Create Account'}
                 </button>
               </div>
             </div>

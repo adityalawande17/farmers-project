@@ -15,6 +15,7 @@ import {
 } from "recharts";
 import { useAuth, API } from "../context/AuthContext";
 import EditCropModal from "../components/EditCropModal";
+import { getCurrentSeason } from "../utils/season";
 
 // ── helpers ───────────────────────────────────────────────────────────────────
 const growthPercent = (plantDate, harvestDate) => {
@@ -152,9 +153,9 @@ const CropCard = ({ crop, onEdit }) => {
               className={`text-xs mt-1.5 ${days <= 14 ? "text-green-600 font-medium" : "text-gray-400"}`}
             >
               {days === 0
-                ? " Harvest today!"
+                ? "Harvest today!"
                 : days <= 14
-                  ? ` Harvest in ${days} days`
+                  ? `Harvest in ${days} days`
                   : `Harvest in ~${days} days`}
             </div>
           )}
@@ -223,7 +224,7 @@ export default function Dashboard() {
   const [yieldData, setYieldData] = useState([]);
   const [editingCrop, setEditingCrop] = useState(null);
 
-  // 1️⃣ Load crops
+  // Load crops
   useEffect(() => {
     Promise.all([
       axios.get(`${API}/farm/dashboard`),
@@ -240,7 +241,7 @@ export default function Dashboard() {
       .finally(() => setLoading(false));
   }, []);
 
-  // 2️⃣ Yield chart
+  // Yield chart
   useEffect(() => {
     axios
       .get(`${API}/farm/yield-chart`)
@@ -248,7 +249,7 @@ export default function Dashboard() {
       .catch(() => setYieldData([]));
   }, []);
 
-  // 3️⃣ Weather
+  // Weather
   useEffect(() => {
     const fetchWeather = (lat, lon) => {
       axios
@@ -266,7 +267,7 @@ export default function Dashboard() {
     }
   }, [user]);
 
-  // 4️⃣ AI alerts
+  // AI alerts
   useEffect(() => {
     if (crops.length === 0) return;
     setAlertsLoading(true);
@@ -312,7 +313,7 @@ Be specific — mention crop names, quantities, exact days. Return only the JSON
         context: {
           crops: crops.map((c) => c.name),
           location,
-          season: "Rabi 2024",
+          season: getCurrentSeason(),
         },
       })
       .then((res) => {

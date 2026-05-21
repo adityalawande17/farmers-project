@@ -31,10 +31,9 @@ const upload = multer({
 
 // POST /api/disease/detect
 router.post("/detect", protect, upload.single("image"), async (req, res) => {
-  try {
-    if (!req.file)
-      return res.status(400).json({ message: "No image uploaded" });
+  if (!req.file) return res.status(400).json({ message: "No image uploaded" });
 
+  try {
     const imageData = fs.readFileSync(req.file.path);
     const base64Image = imageData.toString("base64");
     const mediaType = req.file.mimetype;
@@ -83,7 +82,6 @@ router.post("/detect", protect, upload.single("image"), async (req, res) => {
       result = { disease: "Analysis complete", raw: response.content[0].text };
     }
 
-    // ✅ Save detection to MongoDB so history is real
     await Detection.create({
       user: req.user._id,
       disease: result.disease,
@@ -99,12 +97,11 @@ router.post("/detect", protect, upload.single("image"), async (req, res) => {
       crop: req.body.crop || null,
     });
 
-    // Clean up uploaded file
-    fs.unlinkSync(req.file.path);
-
     res.json({ result });
   } catch (err) {
     res.status(500).json({ message: err.message });
+  } finally {
+    fs.unlink(req.file.path, () => {});
   }
 });
 

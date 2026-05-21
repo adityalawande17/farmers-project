@@ -221,7 +221,6 @@ export default function MandiPrices() {
         </div>
       ) : !error && (
         <div className="flex flex-col items-center justify-center py-20 text-center gap-3">
-          <div className="text-5xl">🌾</div>
           <p className="text-gray-500 text-sm">Search for a crop and state above to see live mandi prices</p>
         </div>
       )}

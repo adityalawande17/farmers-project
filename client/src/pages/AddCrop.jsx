@@ -254,7 +254,7 @@ export default function AddCrop() {
                       onClick={() => removeExpense(i)}
                       className="text-gray-300 hover:text-red-400 text-sm"
                     >
-                      ✕
+                      ×
                     </button>
                   </div>
                 </div>
@@ -349,7 +349,7 @@ export default function AddCrop() {
             disabled={loading}
             className="flex-1 bg-green-500 hover:bg-green-600 text-white font-medium py-3 rounded-xl text-sm transition-colors disabled:opacity-60"
           >
-            {loading ? "Saving..." : " Add Crop"}
+            {loading ? "Saving..." : "Add Crop"}
           </button>
         </div>
       </form>
