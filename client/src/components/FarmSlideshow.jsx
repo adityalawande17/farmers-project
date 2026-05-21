@@ -20,9 +20,9 @@ export default function FarmSlideshow() {
   }, []);
 
   return (
-    <div className="flex flex-col items-center gap-5 w-full max-w-2xl px-10">
+    <div className="flex flex-col items-center gap-5 w-full max-w-4xl px-6">
       {/* 16:9 image container */}
-      <div className="relative w-full aspect-video overflow-hidden rounded-2xl shadow-2xl">
+      <div className="relative w-full aspect-video overflow-hidden">
         {SLIDES.map((url, i) => (
           <img
             key={i}
@@ -37,7 +37,7 @@ export default function FarmSlideshow() {
 
       {/* Caption */}
       <div className="text-center">
-        <p className="text-white/80 text-sm tracking-wide">
+        <p className="text-gray-500 text-sm tracking-wide">
           Some moments from my farm
         </p>
 
@@ -47,7 +47,7 @@ export default function FarmSlideshow() {
             <div
               key={i}
               className={`h-1.5 rounded-full transition-all duration-500 ${
-                i === current ? "w-5 bg-white" : "w-1.5 bg-white/30"
+                i === current ? "w-5 bg-green-500" : "w-1.5 bg-gray-300"
               }`}
             />
           ))}

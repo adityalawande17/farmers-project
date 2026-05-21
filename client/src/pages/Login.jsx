@@ -27,8 +27,8 @@ export default function Login() {
   return (
     <div className="min-h-screen flex">
       {/* Left — form */}
-      <div className="w-full md:w-[440px] shrink-0 bg-gradient-to-br from-green-50 to-emerald-100 flex items-center justify-center px-8 py-10">
-        <div className="w-full max-w-sm">
+      <div className="w-full md:w-[520px] shrink-0 bg-gradient-to-br from-green-50 to-emerald-100 flex items-center justify-center px-10 py-10">
+        <div className="w-full max-w-md">
           <div className="text-center mb-8">
             <div className="w-14 h-14 bg-green-500 rounded-tl-full rounded-tr-full rounded-br-full mx-auto mb-3 flex items-center justify-center text-2xl">🌿</div>
             <h1 className="text-3xl font-serif text-green-800 font-medium">FarmSense</h1>
@@ -85,10 +85,12 @@ export default function Login() {
       </div>
 
       {/* Divider */}
-      <div className="hidden md:block w-px bg-gray-200 shrink-0" />
+      <div className="hidden md:flex items-center justify-center px-1 shrink-0">
+        <div className="h-40 w-px bg-gray-300" />
+      </div>
 
       {/* Right — slideshow */}
-      <div className="hidden md:flex flex-1 bg-gray-950 items-center justify-center">
+      <div className="hidden md:flex flex-1 bg-gradient-to-br from-green-50 to-emerald-100 items-center justify-center">
         <FarmSlideshow />
       </div>
     </div>
