@@ -376,7 +376,7 @@ Be specific — mention crop names, quantities, exact days. Return only the JSON
   return (
     <div className="p-6 max-w-6xl mx-auto">
       {/* Header */}
-      <div className="flex items-start justify-between mb-6">
+      <div className="flex items-start justify-between gap-3 flex-wrap mb-6">
         <div>
           <h1 className="text-2xl font-serif font-medium text-gray-900">
             Good morning, {user?.name?.split(" ")[0] || "Farmer"}

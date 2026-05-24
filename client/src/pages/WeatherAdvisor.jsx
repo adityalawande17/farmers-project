@@ -203,7 +203,7 @@ Answer specifically using the actual forecast data above.`,
         <>
           {/* Today hero card */}
           {today && (
-            <div className="bg-green-500 text-white rounded-2xl p-6 mb-6 flex items-center justify-between">
+            <div className="bg-green-500 text-white rounded-2xl p-6 mb-6 flex items-center justify-between gap-4 flex-wrap">
               <div>
                 <div className="text-sm opacity-80 mb-1">
                   {city} · {today.date}
