@@ -2,6 +2,8 @@ import { useState, useRef, useEffect } from "react";
 import axios from "axios";
 import { useAuth, API } from "../context/AuthContext";
 import { getCurrentSeason } from "../utils/season";
+import ReactMarkdown from "react-markdown";
+import remarkGfm from "remark-gfm";
 
 const SUGGESTIONS = [
   "When should I harvest my wheat?",
@@ -119,27 +121,48 @@ export default function Chatbot() {
                 key={i}
                 className={`flex ${i % 2 === 0 ? "justify-end" : "justify-start"}`}
               >
-                <div className={`h-10 rounded-2xl animate-pulse ${i % 2 === 0 ? "bg-green-100 w-48" : "bg-gray-100 w-64"}`} />
+                <div
+                  className={`h-10 rounded-2xl animate-pulse ${i % 2 === 0 ? "bg-green-100 w-48" : "bg-gray-100 w-64"}`}
+                />
               </div>
             ))}
           </div>
         ) : null}
-        {!historyLoading && messages.map((msg, i) => (
-          <div
-            key={i}
-            className={`flex ${msg.role === "user" ? "justify-end" : "justify-start"}`}
-          >
+        {!historyLoading &&
+          messages.map((msg, i) => (
             <div
-              className={`max-w-[80%] px-4 py-3 rounded-2xl text-sm leading-relaxed ${
-                msg.role === "user"
-                  ? "bg-green-500 text-white rounded-br-md"
-                  : "bg-white border border-gray-100 text-gray-700 rounded-bl-md shadow-sm"
-              }`}
+              key={i}
+              className={`flex ${msg.role === "user" ? "justify-end" : "justify-start"}`}
             >
-              {msg.content}
+              <div
+                className={`px-4 py-3 rounded-2xl text-sm leading-relaxed ${
+                  msg.role === "user"
+                    ? "max-w-[75%] bg-green-500 text-white rounded-br-md"
+                    : "max-w-[92%] bg-white border border-gray-100 text-gray-700 rounded-bl-md shadow-sm"
+                }`}
+              >
+                {/* {msg.content} */}
+                {msg.role === "assistant" ? (
+                  <div
+                    className="prose prose-sm max-w-none
+                  prose-p:my-2
+                  prose-headings:mt-4
+                  prose-headings:mb-2
+                  prose-ul:my-2
+                  prose-ol:my-2
+                  prose-li:my-1
+                  prose-strong:text-gray-900"
+                  >
+                    <ReactMarkdown remarkPlugins={[remarkGfm]}>
+                      {msg.content}
+                    </ReactMarkdown>
+                  </div>
+                ) : (
+                  msg.content
+                )}
+              </div>
             </div>
-          </div>
-        ))}
+          ))}
         {loading && (
           <div className="flex justify-start">
             <div className="bg-white border border-gray-100 px-4 py-3 rounded-2xl rounded-bl-md shadow-sm">
