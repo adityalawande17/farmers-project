@@ -7,6 +7,7 @@ import aiRoutes from "./routes/ai.js";
 import diseaseRoutes from "./routes/disease.js";
 import farmRoutes from "./routes/farm.js";
 import priceRoutes from "./routes/prices.js";
+import advisorRoutes from "./routes/advisor.js";
 
 const app = express();
 
@@ -25,6 +26,7 @@ app.use("/api/ai", aiRoutes);
 app.use("/api/disease", diseaseRoutes);
 app.use("/api/farm", farmRoutes);
 app.use("/api/prices", priceRoutes);
+app.use("/api/ai", advisorRoutes);
 
 app.get("/api/health", (req, res) =>
   res.json({ status: "AI FarmSense API running" }),
