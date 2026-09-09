@@ -1,0 +1,62 @@
+{
+  "onion": {
+    "soilType": "Well-drained sandy loam to loam soil",
+    "climate": "Cool and dry climate during bulb formation",
+    "waterRequirement": "Moderate; requires regular irrigation but does not tolerate waterlogging",
+    "phRange": "6.0-7.5"
+  },
+  "wheat": {
+    "soilType": "Well-drained loam or clay loam soil",
+    "climate": "Cool growing season with dry and warm conditions during grain maturity",
+    "waterRequirement": "Moderate; irrigation is important during critical growth stages",
+    "phRange": "6.0-7.5"
+  },
+  "rice": {
+    "soilType": "Clayey or clay loam soil with good water-holding capacity",
+    "climate": "Warm and humid climate",
+    "waterRequirement": "High; requires abundant water, especially during establishment and vegetative growth",
+    "phRange": "5.5-7.0"
+  },
+  "cotton": {
+    "soilType": "Deep black soil or well-drained loamy soil",
+    "climate": "Warm climate with a long frost-free period",
+    "waterRequirement": "Moderate; sensitive to excessive moisture and waterlogging",
+    "phRange": "6.0-8.0"
+  },
+  "tomato": {
+    "soilType": "Well-drained fertile sandy loam or loam soil",
+    "climate": "Warm climate with moderate temperatures",
+    "waterRequirement": "Moderate to high; requires consistent moisture without waterlogging",
+    "phRange": "6.0-7.0"
+  },
+  "soybean": {
+    "soilType": "Well-drained loam to clay loam soil",
+    "climate": "Warm growing season with adequate rainfall",
+    "waterRequirement": "Moderate; sensitive to both drought and waterlogging",
+    "phRange": "6.0-7.5"
+  },
+  "maize": {
+    "soilType": "Well-drained fertile loam or sandy loam soil",
+    "climate": "Warm climate with adequate sunlight",
+    "waterRequirement": "Moderate to high, particularly during flowering and grain filling",
+    "phRange": "5.8-7.0"
+  },
+  "potato": {
+    "soilType": "Loose, well-drained sandy loam soil",
+    "climate": "Cool climate with moderate temperatures",
+    "waterRequirement": "Moderate; needs consistent moisture but is sensitive to waterlogging",
+    "phRange": "5.0-6.5"
+  },
+  "chickpea": {
+    "soilType": "Well-drained loam to sandy loam soil",
+    "climate": "Cool and relatively dry climate",
+    "waterRequirement": "Low to moderate; excessive moisture can damage the crop",
+    "phRange": "6.0-8.0"
+  },
+  "sugarcane": {
+    "soilType": "Deep fertile loam or clay loam with good drainage",
+    "climate": "Warm and humid climate with a long growing season",
+    "waterRequirement": "High; requires regular and adequate irrigation",
+    "phRange": "6.0-7.5"
+  }
+}
