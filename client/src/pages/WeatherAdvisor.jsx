@@ -36,8 +36,6 @@ export default function WeatherAdvisor() {
   const [city, setCity] = useState("");
   const [loading, setLoading] = useState(true);
   const [weatherError, setWeatherError] = useState("");
-  const [aiAdvice, setAiAdvice] = useState([]);
-  const [adviceLoading, setAdviceLoading] = useState(false);
   const [question, setQuestion] = useState("");
   const [askAdvice, setAskAdvice] = useState("");
   const [askLoading, setAskLoading] = useState(false);
@@ -81,54 +79,6 @@ export default function WeatherAdvisor() {
     }
   }, [user]);
 
-  // Generate real AI advice once forecast is loaded
-  useEffect(() => {
-    if (forecast.length === 0) return;
-    setAdviceLoading(true);
-
-    const forecastSummary = forecast
-      .slice(0, 5)
-      .map(
-        (d) =>
-          `${d.date}: ${d.temp}°C, ${d.description}, rain: ${d.rain}mm, humidity: ${d.humidity}%, wind: ${d.wind}km/h`,
-      )
-      .join("\n");
-
-    const crops = cropNames.length ? cropNames.join(", ") : "general crops";
-    const location = city || user?.location?.district || "your location";
-
-    axios
-      .post(`${API}/ai/chat`, {
-        messages: [
-          {
-            role: "user",
-            content: `You are a farming advisor for a farmer in ${location} who grows ${crops}.
-
-Here is the real 5-day weather forecast:
-${forecastSummary}
-
-Based ONLY on this actual forecast data, give exactly 4 specific farming advisories as a JSON array:
-[{"icon":"emoji","color":"blue|green|amber|red","title":"short title","body":"specific advice based on the actual temperatures and rain data above"}]
-
-Each advisory must reference actual numbers from the forecast (temperatures, rain mm, specific days).
-Categories to cover: irrigation, spraying/pest, heat/cold stress, and sowing/harvesting timing.
-Return only the JSON array, nothing else.`,
-          },
-        ],
-        context: { crops: cropNames, location, season: getCurrentSeason() },
-      })
-      .then((res) => {
-        try {
-          const text = res.data.reply.replace(/```json|```/g, "").trim();
-          setAiAdvice(JSON.parse(text));
-        } catch {
-          setAiAdvice([]);
-        }
-      })
-      .catch(() => setAiAdvice([]))
-      .finally(() => setAdviceLoading(false));
-  }, [forecast]);
-
   const askWeatherQuestion = async () => {
     if (!question.trim() || forecast.length === 0) return;
     setAskLoading(true);
@@ -160,13 +110,6 @@ Answer specifically using the actual forecast data above.`,
     } finally {
       setAskLoading(false);
     }
-  };
-
-  const colorMap = {
-    blue: "bg-blue-50 border-blue-100 text-blue-800",
-    green: "bg-green-50 border-green-100 text-green-800",
-    amber: "bg-amber-50 border-amber-100 text-amber-800",
-    red: "bg-red-50 border-red-100 text-red-800",
   };
 
   const today = forecast[0];
@@ -271,51 +214,8 @@ Answer specifically using the actual forecast data above.`,
               </div>
             </div>
 
-            {/* AI Advice */}
+            {/* Ask AI */}
             <div className="flex flex-col gap-4">
-              <div className="bg-white rounded-2xl border border-gray-100 p-5">
-                <div className="flex items-center justify-between mb-4">
-                  <h2 className="text-sm font-semibold text-gray-700">
-                    AI Farming Advice
-                  </h2>
-                  <span className="text-xs bg-teal-50 text-teal-700 px-2 py-0.5 rounded-full">
-                    Based on real forecast
-                  </span>
-                </div>
-
-                {adviceLoading ? (
-                  <div className="flex flex-col gap-3">
-                    {[1, 2, 3, 4].map((i) => (
-                      <div
-                        key={i}
-                        className="h-14 bg-gray-50 rounded-xl animate-pulse"
-                      />
-                    ))}
-                  </div>
-                ) : aiAdvice.length > 0 ? (
-                  <div className="flex flex-col gap-3">
-                    {aiAdvice.map((a, i) => (
-                      <div
-                        key={i}
-                        className={`p-3 rounded-xl border ${colorMap[a.color] || colorMap.green}`}
-                      >
-                        <div className="text-xs font-semibold mb-1">
-                          {a.icon} {a.title}
-                        </div>
-                        <div className="text-xs leading-relaxed opacity-90">
-                          {a.body}
-                        </div>
-                      </div>
-                    ))}
-                  </div>
-                ) : (
-                  <div className="text-center py-6 text-sm text-gray-400">
-                    Could not generate advice. Please try again later.
-                  </div>
-                )}
-              </div>
-
-              {/* Ask AI */}
               <div className="bg-white rounded-2xl border border-gray-100 p-5">
                 <h2 className="text-sm font-semibold text-gray-700 mb-3">
                   Ask About This Week's Weather
