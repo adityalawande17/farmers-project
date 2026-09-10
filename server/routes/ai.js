@@ -66,31 +66,36 @@ When comparing crops, prefer this structure:
 End with one useful follow-up question only when additional farmer information would materially improve the advice.
 `;
 
+function buildSystemBlocks(context) {
+  const systemBlocks = [
+    {
+      type: "text",
+      text: SYSTEM_PROMPT, // ← identical every request, for every farmer
+      cache_control: { type: "ephemeral" }, // ← "remember this piece"
+    },
+  ];
+
+  if (context) {
+    systemBlocks.push({
+      type: "text",
+      text: `FARMER CONTEXT:
+    - Location: ${context.location || "India"}
+    - Active crops: ${context.crops?.join(", ") || "Unknown"}
+    - Current season: ${context.season || "Current"}
+
+    Use this context only when relevant to the farmer's question.`,
+      // no cache_control here — this piece is allowed to change every time
+    });
+  }
+
+  return systemBlocks;
+}
+
 // POST /api/ai/chat
 router.post("/chat", protect, async (req, res) => {
   try {
     const { messages, context, saveToHistory } = req.body;
-
-    const systemBlocks = [
-      {
-        type: "text",
-        text: SYSTEM_PROMPT, // ← identical every request, for every farmer
-        cache_control: { type: "ephemeral" }, // ← "remember this piece"
-      },
-    ];
-
-    if (context) {
-      systemBlocks.push({
-        type: "text",
-        text: `FARMER CONTEXT:
-    - Location: ${context.location || "India"}
-    - Active crops: ${context.crops?.join(", ") || "Unknown"}
-    - Current season: ${context.season || "Current"}
-    
-    Use this context only when relevant to the farmer's question.`,
-        // no cache_control here — this piece is allowed to change every time
-      });
-    }
+    const systemBlocks = buildSystemBlocks(context);
 
     const response = await anthropic.messages.create({
       model: "claude-haiku-4-5-20251001",
@@ -116,6 +121,65 @@ router.post("/chat", protect, async (req, res) => {
     }
 
     res.json({ reply });
+  } catch (err) {
+    res.status(500).json({ message: err.message });
+  }
+});
+
+// POST /api/ai/chat/stream
+router.post("/chat/stream", protect, async (req, res) => {
+  try {
+    const { messages, context, saveToHistory } = req.body;
+    const systemBlocks = buildSystemBlocks(context);
+
+    res.setHeader("Content-Type", "text/event-stream");
+    res.setHeader("Cache-Control", "no-cache");
+    res.setHeader("Connection", "keep-alive");
+
+    const stream = anthropic.messages.stream({
+      model: "claude-haiku-4-5-20251001",
+      max_tokens: 512,
+      system: systemBlocks,
+      messages,
+    });
+
+    for await (const event of stream) {
+      // for loop bcz the answer comes in pieces event 1 → "Your" event 2 → " tomato" event 3 → " leaves"
+      if (event.type === "content_block_delta" && event.delta.type === "text_delta") {
+        res.write(`data: ${JSON.stringify({ text: event.delta.text })}\n\n`);
+      }
+    }
+
+    const finalMessage = await stream.finalMessage();
+
+    /*Chunks:
+        "Your"
+        " tomato"
+        " leaves"
+        " may"
+        " be yellow..."
+
+        finalMessage
+        "Your tomato leaves may be yellow..." */
+
+    if (saveToHistory) {
+      const userMessage = messages[messages.length - 1];
+      await ChatMessage.insertMany([
+        {
+          user: req.user._id,
+          role: userMessage.role,
+          content: userMessage.content,
+        },
+        {
+          user: req.user._id,
+          role: "assistant",
+          content: finalMessage.content[0].text,
+        },
+      ]);
+    }
+
+    res.write(`data: ${JSON.stringify({ done: true })}\n\n`);
+    res.end();
   } catch (err) {
     res.status(500).json({ message: err.message });
   }
