@@ -99,6 +99,8 @@ router.post("/chat", protect, async (req, res) => {
       messages,
     });
 
+    console.log("[cache-debug]", response.usage);
+
     const reply = response.content[0].text;
 
     if (saveToHistory) {
