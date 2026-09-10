@@ -17,7 +17,7 @@ const GREETING = (name) =>
   `Namaste ${name || ""} ji! I'm your AI farming assistant. Ask me anything about crops, weather, pests, or government schemes — in Hindi, Marathi, or English!`;
 
 export default function Chatbot() {
-  const { user } = useAuth();
+  const { user, token } = useAuth();
   const [cropNames, setCropNames] = useState([]);
   const [messages, setMessages] = useState([]);
   const [historyLoading, setHistoryLoading] = useState(true);
@@ -63,7 +63,12 @@ export default function Chatbot() {
 
     const userMsg = { role: "user", content: msg };
     const updated = [...messages, userMsg];
-    setMessages(updated);
+
+    // Create an empty assistant message immediately.
+    // Streaming chunks will be added to this message.
+    const assistantMsg = { role: "assistant", content: "" };
+
+    setMessages([...updated, assistantMsg]);
     setLoading(true);
 
     try {
@@ -76,23 +81,88 @@ export default function Chatbot() {
       const recentMsgs = updated
         .slice(-10)
         .map((m) => ({ role: m.role, content: m.content }));
-      const { data } = await axios.post(`${API}/ai/chat`, {
-        messages: recentMsgs,
-        context,
-        saveToHistory: true,
-      });
-      setMessages((prev) => [
-        ...prev,
-        { role: "assistant", content: data.reply },
-      ]);
-    } catch {
-      setMessages((prev) => [
-        ...prev,
-        {
-          role: "assistant",
-          content: "Sorry, I had trouble connecting. Please try again.",
+
+      const response = await fetch(`${API}/ai/chat/stream`, {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+          Authorization: `Bearer ${token}`,
         },
-      ]);
+        body: JSON.stringify({
+          messages: recentMsgs,
+          context,
+          saveToHistory: true,
+        }),
+      });
+      if (!response.ok) {
+        throw new Error("Failed to connect to AI");
+      }
+
+      if (!response.body) {
+        throw new Error("Streaming is not supported");
+      }
+      const reader = response.body.getReader();
+      const decoder = new TextDecoder();
+
+      let buffer = "";
+      let finished = false;
+
+      while (!finished) {
+        const { done, value } = await reader.read();
+
+        if (done) break;
+
+        buffer += decoder.decode(value, { stream: true });
+
+        const lines = buffer.split("\n");
+
+        // Keep the last incomplete line in the buffer.
+        buffer = lines.pop() || "";
+
+        for (const line of lines) {
+          if (!line.startsWith("data: ")) continue;
+
+          const data = line.slice(6);
+
+          try {
+            const parsed = JSON.parse(data);
+
+            if (parsed.done) {
+              finished = true;
+              break;
+            }
+
+            if (parsed.text) {
+              setMessages((prev) => {
+                const updatedMessages = [...prev];
+                const lastIndex = updatedMessages.length - 1;
+
+                updatedMessages[lastIndex] = {
+                  ...updatedMessages[lastIndex],
+                  content: updatedMessages[lastIndex].content + parsed.text,
+                };
+
+                return updatedMessages;
+              });
+            }
+          } catch {
+            // Ignore incomplete JSON and wait for the next chunk.
+          }
+        }
+      }
+    } catch (err) {
+      setMessages((prev) => {
+        const updatedMessages = [...prev];
+
+        const lastIndex = updatedMessages.length - 1;
+
+        updatedMessages[lastIndex] = {
+          ...updatedMessages[lastIndex],
+          content: "Sorry, I had trouble connecting. Please try again.",
+        };
+
+        return updatedMessages;
+      });
     } finally {
       setLoading(false);
     }
