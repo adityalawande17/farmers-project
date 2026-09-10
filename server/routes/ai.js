@@ -71,24 +71,31 @@ router.post("/chat", protect, async (req, res) => {
   try {
     const { messages, context, saveToHistory } = req.body;
 
-    // const systemWithContext = context
-    //   ? `${SYSTEM_PROMPT}\n\nFarmer context: Location: ${context.location || "India"}, Active crops: ${context.crops?.join(", ") || "unknown"}, Season: ${context.season || "current"}`
-    //   : SYSTEM_PROMPT;
-    const systemWithContext = context
-      ? `${SYSTEM_PROMPT}
+    const systemBlocks = [
+      {
+        type: "text",
+        text: SYSTEM_PROMPT, // ← identical every request, for every farmer
+        cache_control: { type: "ephemeral" }, // ← "remember this piece"
+      },
+    ];
 
-    FARMER CONTEXT:
+    if (context) {
+      systemBlocks.push({
+        type: "text",
+        text: `FARMER CONTEXT:
     - Location: ${context.location || "India"}
     - Active crops: ${context.crops?.join(", ") || "Unknown"}
     - Current season: ${context.season || "Current"}
-
-    Use this context only when relevant to the farmer's question.`
-      : SYSTEM_PROMPT;
+    
+    Use this context only when relevant to the farmer's question.`,
+        // no cache_control here — this piece is allowed to change every time
+      });
+    }
 
     const response = await anthropic.messages.create({
       model: "claude-haiku-4-5-20251001",
       max_tokens: 512,
-      system: systemWithContext,
+      system: systemBlocks, // ← an array of two pieces now, not one string
       messages,
     });
 
