@@ -15,7 +15,6 @@ import {
 } from "recharts";
 import { useAuth, API } from "../context/AuthContext";
 import EditCropModal from "../components/EditCropModal";
-import { getCurrentSeason } from "../utils/season";
 
 // ── helpers ───────────────────────────────────────────────────────────────────
 const growthPercent = (plantDate, harvestDate) => {
@@ -194,30 +193,11 @@ const CropCard = ({ crop, onEdit }) => {
   );
 };
 
-const AIAlertCard = ({ icon, title, body, color }) => {
-  const styles = {
-    blue: "bg-blue-50 border-blue-100 text-blue-800",
-    amber: "bg-amber-50 border-amber-100 text-amber-800",
-    green: "bg-green-50 border-green-100 text-green-800",
-    red: "bg-red-50 border-red-100 text-red-800",
-  };
-  return (
-    <div className={`p-3.5 rounded-xl border ${styles[color]}`}>
-      <div className="text-xs font-semibold mb-1">
-        {icon} {title}
-      </div>
-      <div className="text-xs leading-relaxed opacity-90">{body}</div>
-    </div>
-  );
-};
-
 // ── main component ────────────────────────────────────────────────────────────
 export default function Dashboard() {
   const { user } = useAuth();
   const [crops, setCrops] = useState([]);
   const [stats, setStats] = useState(null);
-  const [aiAlerts, setAiAlerts] = useState([]);
-  const [alertsLoading, setAlertsLoading] = useState(false);
   const [loading, setLoading] = useState(true);
   const [activeTab, setActiveTab] = useState("all");
   const [weather, setWeather] = useState(null);
@@ -266,67 +246,6 @@ export default function Dashboard() {
       );
     }
   }, [user]);
-
-  // AI alerts
-  useEffect(() => {
-    if (crops.length === 0) return;
-    setAlertsLoading(true);
-
-    const activeCrops = crops
-      .filter((c) => c.status === "growing")
-      .map((c) => ({
-        name: c.name,
-        variety: c.variety,
-        area: c.area,
-        plantedDaysAgo: Math.round(
-          (Date.now() - new Date(c.plantingDate)) / 86400000,
-        ),
-        daysToHarvest: daysUntil(c.expectedHarvestDate),
-        totalExpenses: c.expenses?.reduce((s, e) => s + e.amount, 0) || 0,
-      }));
-
-    const location = `${user?.location?.district || "Pune"}, ${user?.location?.state || "Maharashtra"}`;
-    const weatherSummary = weather?.forecast?.length
-      ? `Weather next 3 days: ${weather.forecast
-          .slice(0, 3)
-          .map(
-            (d) =>
-              `${d.date}: ${d.temp}°C, ${d.description}, rain: ${d.rain}mm`,
-          )
-          .join(" | ")}`
-      : "Weather data unavailable";
-
-    axios
-      .post(`${API}/ai/chat`, {
-        messages: [
-          {
-            role: "user",
-            content: `You are advising farmer ${user?.name || "a farmer"} in ${location}.
-Active crops: ${JSON.stringify(activeCrops)}
-${weatherSummary}
-Current date: ${new Date().toDateString()}
-Give exactly 3 specific actionable farming alerts as a JSON array:
-[{"icon":"emoji","title":"short title","body":"specific advice mentioning crop names and exact actions","color":"blue|amber|green|red"}]
-Be specific — mention crop names, quantities, exact days. Return only the JSON array, nothing else.`,
-          },
-        ],
-        context: {
-          crops: crops.map((c) => c.name),
-          location,
-          season: getCurrentSeason(),
-        },
-      })
-      .then((res) => {
-        try {
-          const text = res.data.reply.replace(/```json|```/g, "").trim();
-          setAiAlerts(JSON.parse(text));
-        } catch {
-          setAiAlerts([]);
-        }
-      })
-      .catch(() => setAiAlerts([]))
-      .finally(() => setAlertsLoading(false));
-  }, [crops, weather]);
 
   // ── modal callbacks ───────────────────────────────────────────────────────
   const handleCropSaved = (updatedCrop) => {
@@ -506,48 +425,9 @@ Be specific — mention crop names, quantities, exact days. Return only the JSON
         </div>
       </div>
 
-      {/* AI Alerts + Crops */}
-      <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
+      {/* Crops */}
+      <div className="grid grid-cols-1 gap-6">
         <div className="bg-white rounded-2xl border border-gray-100 p-5">
-          <div className="flex items-center justify-between mb-4">
-            <h2 className="text-sm font-semibold text-gray-700">
-              AI Farm Advisor
-            </h2>
-            <span className="text-xs bg-teal-50 text-teal-700 px-2 py-0.5 rounded-full">
-              Live AI
-            </span>
-          </div>
-          {alertsLoading ? (
-            <div className="flex flex-col gap-3">
-              {[1, 2, 3].map((i) => (
-                <div
-                  key={i}
-                  className="h-16 bg-gray-50 rounded-xl animate-pulse"
-                />
-              ))}
-            </div>
-          ) : aiAlerts.length > 0 ? (
-            <div className="flex flex-col gap-3">
-              {aiAlerts.map((a, i) => (
-                <AIAlertCard key={i} {...a} />
-              ))}
-            </div>
-          ) : (
-            <div className="flex flex-col items-center justify-center py-8 text-center gap-2">
-              <p className="text-sm text-gray-400">
-                Add your first crop to get AI advice
-              </p>
-            </div>
-          )}
-          <Link
-            to="/chat"
-            className="mt-4 block text-center text-xs text-green-600 hover:underline"
-          >
-            Ask AI a question →
-          </Link>
-        </div>
-
-        <div className="md:col-span-2 bg-white rounded-2xl border border-gray-100 p-5">
           <div className="flex items-center justify-between mb-4">
             <h2 className="text-sm font-semibold text-gray-700">Your Crops</h2>
             <div className="flex gap-1 bg-gray-50 p-1 rounded-lg">
