@@ -5,6 +5,7 @@ import Login from './pages/Login';
 import Register from './pages/Register';
 import Dashboard from './pages/Dashboard';
 import Chatbot from './pages/Chatbot';
+import Advisor from './pages/Advisor';
 import DiseaseDetector from './pages/DiseaseDetector';
 import MandiPrices from './pages/MandiPrices';
 import WeatherAdvisor from './pages/WeatherAdvisor';
@@ -26,6 +27,7 @@ export default function App() {
           <Route path="/" element={<ProtectedRoute><Layout /></ProtectedRoute>}>
             <Route index element={<Dashboard />} />
             <Route path="chat" element={<Chatbot />} />
+            <Route path="advisor" element={<Advisor />} />
             <Route path="disease" element={<DiseaseDetector />} />
             <Route path="prices" element={<MandiPrices />} />
             <Route path="weather" element={<WeatherAdvisor />} />

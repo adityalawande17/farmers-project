@@ -4,6 +4,7 @@ import { useAuth } from "../context/AuthContext";
 const navItems = [
   { to: "/", label: "Dashboard", icon: "⊞", exact: true },
   { to: "/chat", label: "AI Assistant", badge: "AI" },
+  { to: "/advisor", label: "Planting Advisor", badge: "AI" },
   { to: "/disease", label: "Disease Detector", badge: "AI" },
   { to: "/prices", label: "Mandi Prices", icon: "₹" },
   { to: "/weather", label: "Weather Advisor", badge: "AI" },
