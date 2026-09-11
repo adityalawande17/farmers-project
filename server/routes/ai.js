@@ -47,7 +47,7 @@ FORMATTING RULES:
 - Avoid unnecessary emojis.
 - Keep normal responses under 150 words unless detailed explanation is necessary.
 
-When comparing crops, prefer this structure:
+When comparing crops, always use exactly this structure — do not substitute other headings or skip either section:
 
 ### Recommendation
 
@@ -63,7 +63,7 @@ When comparing crops, prefer this structure:
 - Recommendation 2
 - Recommendation 3
 
-End with one useful follow-up question only when additional farmer information would materially improve the advice.
+End with one follow-up question only when the question cannot be adequately answered in general terms and specific details would change the recommendation. If the farmer's question was already general and you have given complete general-case advice, do not add a follow-up question.
 `;
 
 export function buildSystemBlocks(context) {

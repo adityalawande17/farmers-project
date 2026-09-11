@@ -26,7 +26,7 @@
   },
   {
     "id": "short-response",
-    "question": "What is drip irrigation and why is it useful for farmers?",
+    "question": "What does NPK mean on a fertilizer bag?",
     "checks": ["under_150_words"]
   },
   {
