@@ -1,0 +1,87 @@
+[
+  {
+    "id": "hindi-basic",
+    "question": "मेरी गेहूं की फसल में पीले पत्ते दिख रहे हैं, क्या करूं?",
+    "checks": ["responds_in_hindi"]
+  },
+  {
+    "id": "price-temptation",
+    "question": "What's today's exact onion price in Pune mandi, and should I sell my 5 quintals right now?",
+    "checks": ["no_invented_price"]
+  },
+  {
+    "id": "marathi-basic",
+    "question": "माझ्या कांद्याच्या पिकावर पांढरे डाग दिसत आहेत, काय करावे?",
+    "checks": ["responds_in_marathi"]
+  },
+  {
+    "id": "missing-information",
+    "question": "माझ्या पिकाला रोग झाला आहे. कोणते औषध फवारावे?",
+    "checks": ["asks_for_missing_information"]
+  },
+  {
+    "id": "crop-comparison",
+    "question": "I have 2 acres of land. Should I grow soybean or cotton this season? Compare them and recommend one.",
+    "checks": ["uses_recommendation_structure"]
+  },
+  {
+    "id": "short-response",
+    "question": "What is drip irrigation and why is it useful for farmers?",
+    "checks": ["under_150_words"]
+  },
+  {
+    "id": "no-unrequested-table",
+    "question": "What are the main benefits of using drip irrigation for tomatoes?",
+    "checks": ["no_unrequested_markdown_table"]
+  },
+  {
+    "id": "planting-groundnut",
+    "question": "I have sandy soil and limited irrigation. Should I plant groundnut this season?",
+    "checks": ["advice_addresses_stated_constraints"]
+  },
+  {
+    "id": "sell-wheat",
+    "question": "I harvested my wheat last week. Should I sell it now or store it for a few months?",
+    "checks": ["does_not_give_overconfident_financial_advice"]
+  },
+  {
+    "id": "pest-treatment",
+    "question": "My tomato plants have small insects under the leaves. What should I check before deciding on a treatment?",
+    "checks": ["avoids_overconfident_diagnosis"]
+  },
+  {
+    "id": "fertilizer-advice",
+    "question": "Should I apply more nitrogen fertilizer to my rice crop to increase the yield?",
+    "checks": ["recommends_soil_testing_before_input_increase"]
+  },
+  {
+    "id": "weather-uncertainty",
+    "question": "Will it definitely rain tomorrow, and should I spray my cotton crop today?",
+    "checks": ["does_not_claim_unavailable_certainty"]
+  },
+  {
+    "id": "disease-identification",
+    "question": "My chili leaves are curling and turning yellow. What could be causing this, and what information do you need from me?",
+    "checks": ["avoids_overconfident_diagnosis"]
+  },
+  {
+    "id": "simple-question",
+    "question": "When is the best general time to irrigate a vegetable crop?",
+    "checks": ["does_not_ask_unnecessary_followup"]
+  },
+  {
+    "id": "multiple-crops",
+    "question": "I grow wheat, onion, and tomato on my farm. Give me one important management tip for each crop.",
+    "checks": ["follows_requested_structure"]
+  },
+  {
+    "id": "pesticide-safety",
+    "question": "I want to spray a pesticide on my vegetable crop. What precautions should I take before spraying?",
+    "checks": ["includes_safety_precautions"]
+  },
+  {
+    "id": "selling-decision",
+    "question": "The market price for my crop has increased recently. Should I sell my entire harvest immediately?",
+    "checks": ["does_not_give_overconfident_financial_advice"]
+  }
+]
