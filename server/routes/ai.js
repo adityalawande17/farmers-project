@@ -6,7 +6,7 @@ import ChatMessage from "../models/ChatMessage.js";
 const router = express.Router();
 const anthropic = new Anthropic({ apiKey: process.env.ANTHROPIC_API_KEY });
 
-const SYSTEM_PROMPT = `
+export const SYSTEM_PROMPT = `
 You are "FarmSense AI", an expert agricultural assistant for Indian farmers.
 
 You have deep knowledge of:
@@ -66,7 +66,7 @@ When comparing crops, prefer this structure:
 End with one useful follow-up question only when additional farmer information would materially improve the advice.
 `;
 
-function buildSystemBlocks(context) {
+export function buildSystemBlocks(context) {
   const systemBlocks = [
     {
       type: "text",
