@@ -1,8 +1,6 @@
 import axios from "axios";
-import fs from "fs/promises";
-import path from "path";
-import { fileURLToPath } from "url";
 import Crop from "../models/Crop.js";
+import { retrieveRelevantChunks } from "../rag/retrieve.js";
 
 // --- Scaffolded (extracted from prices.js — same logic, just callable directly) ---
 
@@ -58,29 +56,28 @@ export async function getCropCalendar(userId) {
   return crops;
 }
 
-const __filename = fileURLToPath(import.meta.url);
-const __dirname = path.dirname(__filename);
-
-const soilDataPath = path.join(__dirname, "soilData.json");
-
 export async function getSoilRequirements(crop) {
-  const rawData = await fs.readFile(soilDataPath, "utf-8");
-  const soilData = JSON.parse(rawData);
+  const chunks = await retrieveRelevantChunks(
+    `What are the soil requirements for growing ${crop}`,
+    3,
+  );
 
-  const cropKey = crop.trim().toLowerCase();
-  const requirements = soilData[cropKey];
-
-  if (!requirements) {
+  if (chunks.length === 0) {
     return {
       crop,
       found: false,
-      message: `I don't have soil requirement data for ${crop}.`,
+      message: `I couldn't find requirement information for ${crop}.`,
     };
   }
-
   return {
-    crop: cropKey,
+    crop,
     found: true,
-    ...requirements,
+    results: chunks.map((chunk) => ({
+      text: chunk.text,
+      source: {
+        documentName: chunk.source.documentName,
+        chunkIndex: chunk.source.chunkIndex,
+      },
+    })),
   };
 }
