@@ -15,6 +15,11 @@ import {
 } from "recharts";
 import { useAuth, API } from "../context/AuthContext";
 import EditCropModal from "../components/EditCropModal";
+import Card from "../components/ui/Card";
+import Badge from "../components/ui/Badge";
+import PageHeader from "../components/ui/PageHeader";
+import EmptyState from "../components/ui/EmptyState";
+import { buttonClasses } from "../components/ui/Button";
 
 // ── helpers ───────────────────────────────────────────────────────────────────
 const growthPercent = (plantDate, harvestDate) => {
@@ -32,11 +37,7 @@ const daysUntil = (date) => {
 
 const formatCurrency = (n) => `₹${Number(n || 0).toLocaleString("en-IN")}`;
 
-const SEASON_COLORS = {
-  kharif: "bg-amber-50 text-amber-700",
-  rabi: "bg-blue-50 text-blue-700",
-  zaid: "bg-green-50 text-green-700",
-};
+const SEASON_TONES = { kharif: "amber", rabi: "blue", zaid: "green" };
 
 const PIE_COLORS = [
   "#22c55e",
@@ -49,7 +50,7 @@ const PIE_COLORS = [
 
 // ── sub-components ────────────────────────────────────────────────────────────
 const StatCard = ({ label, value, sub, subColor = "text-green-600", icon }) => (
-  <div className="bg-white rounded-2xl border border-gray-100 p-5 flex items-start gap-4">
+  <Card className="flex items-start gap-4">
     {icon && <div className="text-2xl mt-0.5">{icon}</div>}
     <div>
       <p className="text-xs text-gray-400 uppercase tracking-wider mb-1">
@@ -58,7 +59,7 @@ const StatCard = ({ label, value, sub, subColor = "text-green-600", icon }) => (
       <p className="text-2xl font-semibold text-gray-900">{value}</p>
       {sub && <p className={`text-xs mt-1 ${subColor}`}>{sub}</p>}
     </div>
-  </div>
+  </Card>
 );
 
 const CropCard = ({ crop, onEdit }) => {
@@ -69,7 +70,7 @@ const CropCard = ({ crop, onEdit }) => {
   const isHarvested = crop.status === "harvested";
 
   return (
-    <div className="bg-white rounded-2xl border border-gray-100 p-5 flex flex-col gap-3 hover:border-green-200 transition-colors">
+    <Card className="flex flex-col gap-3 hover:border-green-200 transition-colors">
       {/* Header */}
       <div className="flex items-start justify-between">
         <div>
@@ -79,16 +80,10 @@ const CropCard = ({ crop, onEdit }) => {
           )}
         </div>
         <div className="flex items-center gap-1.5">
-          <span
-            className={`text-xs px-2 py-0.5 rounded-full capitalize ${SEASON_COLORS[crop.season] || "bg-gray-100 text-gray-600"}`}
-          >
-            {crop.season}
-          </span>
-          <span
-            className={`text-xs px-2 py-0.5 rounded-full ${isHarvested ? "bg-green-50 text-green-700" : "bg-blue-50 text-blue-700"}`}
-          >
+          <Badge tone={SEASON_TONES[crop.season] || "gray"}>{crop.season}</Badge>
+          <Badge tone={isHarvested ? "green" : "blue"}>
             {isHarvested ? "Harvested" : "Growing"}
-          </span>
+          </Badge>
           {/* Edit button */}
           <button
             onClick={() => onEdit(crop)}
@@ -189,7 +184,7 @@ const CropCard = ({ crop, onEdit }) => {
           ))}
         </div>
       )}
-    </div>
+    </Card>
   );
 };
 
@@ -294,26 +289,25 @@ export default function Dashboard() {
 
   return (
     <div className="p-6 max-w-6xl mx-auto">
-      {/* Header */}
-      <div className="flex items-start justify-between gap-3 flex-wrap mb-6">
-        <div>
-          <h1 className="text-2xl font-serif font-medium text-gray-900">
-            Good morning, {user?.name?.split(" ")[0] || "Farmer"}
-          </h1>
-          <p className="text-sm text-gray-400 mt-1">
+      <PageHeader
+        title={`Good morning, ${user?.name?.split(" ")[0] || "Farmer"}`}
+        subtitle={
+          <>
             Rabi Season 2026 · {user?.location?.district || "Pune"},{" "}
             {user?.location?.state || "Maharashtra"}
             {weather?.city &&
               ` · ${weather.forecast?.[0]?.temp}°C ${weather.forecast?.[0]?.description}`}
-          </p>
-        </div>
-        <Link
-          to="/add-crop"
-          className="bg-green-500 hover:bg-green-600 text-white text-sm font-medium px-4 py-2.5 rounded-xl transition-colors flex items-center gap-2"
-        >
-          <span>+</span> Add Crop
-        </Link>
-      </div>
+          </>
+        }
+        action={
+          <Link
+            to="/add-crop"
+            className={`${buttonClasses("primary")} flex items-center gap-2`}
+          >
+            <span>+</span> Add Crop
+          </Link>
+        }
+      />
 
       {/* Stat cards */}
       <div className="grid grid-cols-2 md:grid-cols-4 gap-4 mb-6">
@@ -342,7 +336,7 @@ export default function Dashboard() {
 
       {/* Charts */}
       <div className="grid grid-cols-1 md:grid-cols-3 gap-6 mb-6">
-        <div className="md:col-span-2 bg-white rounded-2xl border border-gray-100 p-5">
+        <Card className="md:col-span-2">
           <div className="flex items-center justify-between mb-4">
             <h2 className="text-sm font-semibold text-gray-700">
               Monthly Yield (kg)
@@ -384,9 +378,9 @@ export default function Dashboard() {
               </p>
             </div>
           )}
-        </div>
+        </Card>
 
-        <div className="bg-white rounded-2xl border border-gray-100 p-5">
+        <Card>
           <h2 className="text-sm font-semibold text-gray-700 mb-4">
             Expense Breakdown
           </h2>
@@ -422,12 +416,12 @@ export default function Dashboard() {
               No expenses yet
             </div>
           )}
-        </div>
+        </Card>
       </div>
 
       {/* Crops */}
       <div className="grid grid-cols-1 gap-6">
-        <div className="bg-white rounded-2xl border border-gray-100 p-5">
+        <Card>
           <div className="flex items-center justify-between mb-4">
             <h2 className="text-sm font-semibold text-gray-700">Your Crops</h2>
             <div className="flex gap-1 bg-gray-50 p-1 rounded-lg">
@@ -453,17 +447,14 @@ export default function Dashboard() {
           </div>
 
           {filteredCrops.length === 0 ? (
-            <div className="flex flex-col items-center justify-center py-12 text-center">
-              <p className="text-sm text-gray-500 mb-4">
-                No {activeTab !== "all" ? activeTab : ""} crops yet
-              </p>
-              <Link
-                to="/add-crop"
-                className="text-sm bg-green-500 text-white px-4 py-2 rounded-xl hover:bg-green-600 transition-colors"
-              >
-                + Add your first crop
-              </Link>
-            </div>
+            <EmptyState
+              title={`No ${activeTab !== "all" ? activeTab : ""} crops yet`}
+              action={
+                <Link to="/add-crop" className={buttonClasses("primary")}>
+                  + Add your first crop
+                </Link>
+              }
+            />
           ) : (
             <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
               {filteredCrops.map((crop) => (
@@ -471,7 +462,7 @@ export default function Dashboard() {
               ))}
             </div>
           )}
-        </div>
+        </Card>
       </div>
 
       {/* Edit modal */}

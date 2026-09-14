@@ -1,6 +1,7 @@
 import { useState, useEffect } from "react";
 import { Outlet, NavLink, useNavigate, useLocation } from "react-router-dom";
 import { useAuth } from "../context/AuthContext";
+import Badge from "./ui/Badge";
 
 const navItems = [
   { to: "/", label: "Dashboard", icon: "⊞", exact: true },
@@ -58,11 +59,7 @@ const NavList = ({ onNavigate }) => (
       >
         <span className="text-base">{icon}</span>
         <span className="flex-1">{label}</span>
-        {badge && (
-          <span className="text-xs bg-teal-50 text-teal-700 px-1.5 py-0.5 rounded-full">
-            {badge}
-          </span>
-        )}
+        {badge && <Badge tone="teal">{badge}</Badge>}
       </NavLink>
     ))}
   </nav>
