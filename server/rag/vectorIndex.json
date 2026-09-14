@@ -1,0 +1,15 @@
+{
+  "name": "documentchunks_vector_index",
+  "collection": "documentchunks",
+  "type": "vectorSearch",
+  "definition": {
+    "fields": [
+      {
+        "type": "vector",
+        "path": "embedding",
+        "numDimensions": 1536,
+        "similarity": "cosine"
+      }
+    ]
+  }
+}
