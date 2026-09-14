@@ -2,6 +2,8 @@ import { useState, useEffect } from "react";
 import axios from "axios";
 import { API, useAuth } from "../context/AuthContext";
 import { getCurrentSeason } from "../utils/season";
+import PageHeader from "../components/ui/PageHeader";
+import Card from "../components/ui/Card";
 
 const WEATHER_ICONS = {
   "clear sky": "☀️",
@@ -116,14 +118,10 @@ Answer specifically using the actual forecast data above.`,
 
   return (
     <div className="p-6 max-w-5xl mx-auto">
-      <div className="mb-6">
-        <h1 className="text-2xl font-serif font-medium text-gray-900">
-          Weather Advisor
-        </h1>
-        <p className="text-sm text-gray-400 mt-1">
-          Real-time forecast + AI farming recommendations for your location
-        </p>
-      </div>
+      <PageHeader
+        title="Weather Advisor"
+        subtitle="Real-time forecast + AI farming recommendations for your location"
+      />
 
       {/* Error state */}
       {weatherError && (
@@ -173,7 +171,7 @@ Answer specifically using the actual forecast data above.`,
 
           <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
             {/* 7-day forecast */}
-            <div className="bg-white rounded-2xl border border-gray-100 p-5">
+            <Card>
               <h2 className="text-sm font-semibold text-gray-700 mb-4">
                 {forecast.length}-Day Forecast · {city}
               </h2>
@@ -212,11 +210,11 @@ Answer specifically using the actual forecast data above.`,
                   </div>
                 ))}
               </div>
-            </div>
+            </Card>
 
             {/* Ask AI */}
             <div className="flex flex-col gap-4">
-              <div className="bg-white rounded-2xl border border-gray-100 p-5">
+              <Card>
                 <h2 className="text-sm font-semibold text-gray-700 mb-3">
                   Ask About This Week's Weather
                 </h2>
@@ -251,7 +249,7 @@ Answer specifically using the actual forecast data above.`,
                     </p>
                   </div>
                 )}
-              </div>
+              </Card>
             </div>
           </div>
         </>

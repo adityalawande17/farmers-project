@@ -4,6 +4,9 @@ import { useAuth, API } from "../context/AuthContext";
 import { getCurrentSeason } from "../utils/season";
 import ReactMarkdown from "react-markdown";
 import remarkGfm from "remark-gfm";
+import PageHeader from "../components/ui/PageHeader";
+import Button from "../components/ui/Button";
+import Skeleton from "../components/ui/Skeleton";
 
 const SUGGESTIONS = [
   "When should I harvest my wheat?",
@@ -172,15 +175,11 @@ export default function Chatbot() {
 
   return (
     <div className="flex flex-col h-full">
-      {/* Header */}
-      <div className="bg-white border-b border-gray-100 px-6 py-4">
-        <h1 className="text-xl font-serif font-medium text-gray-900">
-          AI Farm Assistant
-        </h1>
-        <p className="text-sm text-gray-400 mt-0.5">
-          Powered by Claude AI · Hindi, Marathi & English
-        </p>
-      </div>
+      <PageHeader
+        variant="bordered"
+        title="AI Farm Assistant"
+        subtitle="Powered by Claude AI · Hindi, Marathi & English"
+      />
 
       {/* Messages */}
       <div className="flex-1 overflow-y-auto px-6 py-4 flex flex-col gap-3 max-w-3xl w-full mx-auto">
@@ -191,8 +190,8 @@ export default function Chatbot() {
                 key={i}
                 className={`flex ${i % 2 === 0 ? "justify-end" : "justify-start"}`}
               >
-                <div
-                  className={`h-10 rounded-2xl animate-pulse ${i % 2 === 0 ? "bg-green-100 w-48" : "bg-gray-100 w-64"}`}
+                <Skeleton
+                  className={`h-10 rounded-2xl ${i % 2 === 0 ? "bg-green-100 w-48" : "bg-gray-100 w-64"}`}
                 />
               </div>
             ))}
@@ -281,13 +280,9 @@ export default function Chatbot() {
             placeholder="Ask anything... e.g. When should I water my wheat?"
             className="flex-1 px-4 py-2.5 bg-gray-50 border border-gray-200 rounded-xl text-sm focus:outline-none focus:border-green-400 focus:bg-white transition-colors"
           />
-          <button
-            onClick={() => send()}
-            disabled={loading || !input.trim()}
-            className="px-5 py-2.5 bg-green-500 text-white rounded-xl text-sm font-medium hover:bg-green-600 disabled:opacity-50 disabled:cursor-not-allowed transition-colors"
-          >
+          <Button onClick={() => send()} disabled={loading || !input.trim()}>
             Send
-          </button>
+          </Button>
         </div>
       </div>
     </div>
