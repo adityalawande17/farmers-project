@@ -6,6 +6,7 @@ const TONES = {
   green: "bg-green-50 text-green-700",
   red: "bg-red-50 text-red-700",
   amber: "bg-amber-50 text-amber-700",
+  yellow: "bg-yellow-50 text-yellow-700",
   blue: "bg-blue-50 text-blue-700",
   teal: "bg-teal-50 text-teal-700",
   gray: "bg-gray-100 text-gray-600",

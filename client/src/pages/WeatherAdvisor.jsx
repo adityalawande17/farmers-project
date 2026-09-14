@@ -4,6 +4,7 @@ import { API, useAuth } from "../context/AuthContext";
 import { getCurrentSeason } from "../utils/season";
 import PageHeader from "../components/ui/PageHeader";
 import Card from "../components/ui/Card";
+import Button from "../components/ui/Button";
 import ErrorBanner from "../components/ui/ErrorBanner";
 
 const WEATHER_ICONS = {
@@ -225,13 +226,13 @@ Answer specifically using the actual forecast data above.`,
                     placeholder="e.g. Should I spray pesticide this week?"
                     className="flex-1 px-3 py-2 bg-gray-50 border border-gray-200 rounded-xl text-xs focus:outline-none focus:border-green-400 transition-colors"
                   />
-                  <button
+                  <Button
                     onClick={askWeatherQuestion}
                     disabled={askLoading || !question.trim()}
-                    className="bg-green-500 hover:bg-green-600 text-white text-xs px-4 py-2 rounded-xl disabled:opacity-50 transition-colors"
+                    size="sm"
                   >
                     Ask
-                  </button>
+                  </Button>
                 </div>
                 {askLoading && (
                   <div className="flex items-center gap-2 mt-3">

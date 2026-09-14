@@ -3,6 +3,13 @@ import axios from 'axios';
 import { LineChart, Line, XAxis, YAxis, Tooltip, ResponsiveContainer } from 'recharts';
 import { API } from '../context/AuthContext';
 import { useAuth } from '../context/AuthContext';
+import PageHeader from '../components/ui/PageHeader';
+import Card from '../components/ui/Card';
+import Badge from '../components/ui/Badge';
+import Button from '../components/ui/Button';
+import ErrorBanner from '../components/ui/ErrorBanner';
+import EmptyState from '../components/ui/EmptyState';
+import Skeleton from '../components/ui/Skeleton';
 
 export default function MandiPrices() {
   const { user } = useAuth();
@@ -68,13 +75,13 @@ export default function MandiPrices() {
 
   return (
     <div className="p-6 max-w-5xl mx-auto">
-      <div className="mb-6">
-        <h1 className="text-2xl font-serif font-medium text-gray-900">Mandi Price Tracker</h1>
-        <p className="text-sm text-gray-400 mt-1">Real prices from Government of India · data.gov.in</p>
-      </div>
+      <PageHeader
+        title="Mandi Price Tracker"
+        subtitle="Real prices from Government of India · data.gov.in"
+      />
 
       {/* Search bar */}
-      <div className="bg-white rounded-2xl border border-gray-100 p-4 mb-6 flex flex-wrap gap-3 items-end">
+      <Card padding="p-4" className="mb-6 flex flex-wrap gap-3 items-end">
         <div className="flex-1 min-w-40">
           <label className="block text-xs text-gray-500 mb-1.5">Crop Name</label>
           <input
@@ -95,27 +102,21 @@ export default function MandiPrices() {
             {STATES.map(s => <option key={s}>{s}</option>)}
           </select>
         </div>
-        <button
-          onClick={fetchPrices}
-          disabled={loading}
-          className="bg-green-500 hover:bg-green-600 text-white text-sm font-medium px-5 py-2.5 rounded-xl transition-colors disabled:opacity-60"
-        >
+        <Button onClick={fetchPrices} disabled={loading}>
           {loading ? 'Searching...' : 'Search Prices'}
-        </button>
-      </div>
+        </Button>
+      </Card>
 
-      {error && (
-        <div className="bg-red-50 border border-red-100 text-red-700 text-sm px-4 py-3 rounded-xl mb-6">{error}</div>
-      )}
+      <ErrorBanner className="mb-6">{error}</ErrorBanner>
 
       {loading ? (
         <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
-          {[1,2,3,4,5,6].map(i => <div key={i} className="h-24 bg-white rounded-2xl animate-pulse border border-gray-100" />)}
+          {[1,2,3,4,5,6].map(i => <Skeleton key={i} className="h-24 bg-white rounded-2xl border border-gray-100" />)}
         </div>
       ) : prices.length > 0 ? (
         <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
           {/* Price list */}
-          <div className="bg-white rounded-2xl border border-gray-100 p-5">
+          <Card>
             <div className="flex items-center justify-between mb-4">
               <h2 className="text-sm font-semibold text-gray-700">Results ({prices.length})</h2>
               <span className="text-xs text-gray-400">{searchState}</span>
@@ -141,14 +142,14 @@ export default function MandiPrices() {
                 </button>
               ))}
             </div>
-          </div>
+          </Card>
 
           {/* Detail + AI Advisor */}
           <div className="md:col-span-2 flex flex-col gap-5">
             {selected && (
               <>
                 {/* Price detail card */}
-                <div className="bg-white rounded-2xl border border-gray-100 p-5">
+                <Card>
                   <div className="flex items-start justify-between mb-4">
                     <div>
                       <h2 className="text-lg font-semibold text-gray-900">{selected.commodity}</h2>
@@ -176,13 +177,13 @@ export default function MandiPrices() {
                   {selected.variety && (
                     <p className="text-xs text-gray-400 mt-3">Variety: {selected.variety}</p>
                   )}
-                </div>
+                </Card>
 
                 {/* AI Sell Advisor */}
-                <div className="bg-white rounded-2xl border border-gray-100 p-5">
+                <Card>
                   <div className="flex items-center justify-between mb-4">
                     <h2 className="text-sm font-semibold text-gray-700">AI Sell Advisor</h2>
-                    <span className="text-xs bg-teal-50 text-teal-700 px-2 py-0.5 rounded-full">AI</span>
+                    <Badge tone="teal">AI</Badge>
                   </div>
 
                   {!advice && !adviceLoading && (
@@ -190,10 +191,7 @@ export default function MandiPrices() {
                       <p className="text-sm text-gray-500 mb-4">
                         Should you sell your <span className="font-medium text-green-700">{selected.commodity}</span> now at {formatPrice(selected.modal_price)}/q or wait?
                       </p>
-                      <button onClick={getAdvice}
-                        className="bg-green-500 hover:bg-green-600 text-white text-sm font-medium px-6 py-2.5 rounded-xl transition-colors">
-                        Get AI Advice
-                      </button>
+                      <Button onClick={getAdvice}>Get AI Advice</Button>
                     </div>
                   )}
 
@@ -214,15 +212,16 @@ export default function MandiPrices() {
                       </button>
                     </div>
                   )}
-                </div>
+                </Card>
               </>
             )}
           </div>
         </div>
       ) : !error && (
-        <div className="flex flex-col items-center justify-center py-20 text-center gap-3">
-          <p className="text-gray-500 text-sm">Search for a crop and state above to see live mandi prices</p>
-        </div>
+        <EmptyState
+          padding="py-20"
+          title="Search for a crop and state above to see live mandi prices"
+        />
       )}
 
       {/* Data source note */}

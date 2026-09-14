@@ -1,12 +1,19 @@
 import { useState, useRef, useEffect } from "react";
 import axios from "axios";
 import { API } from "../context/AuthContext";
+import PageHeader from "../components/ui/PageHeader";
+import Card from "../components/ui/Card";
+import Badge from "../components/ui/Badge";
+import Button from "../components/ui/Button";
+import ErrorBanner from "../components/ui/ErrorBanner";
+import EmptyState from "../components/ui/EmptyState";
+import Skeleton from "../components/ui/Skeleton";
 
-const SEVERITY_COLORS = {
-  None: "bg-green-50 text-green-800",
-  Mild: "bg-yellow-50 text-yellow-800",
-  Moderate: "bg-amber-50 text-amber-800",
-  Severe: "bg-red-50 text-red-800",
+const SEVERITY_TONES = {
+  None: "green",
+  Mild: "yellow",
+  Moderate: "amber",
+  Severe: "red",
 };
 
 const URGENCY_COLORS = {
@@ -89,25 +96,19 @@ export default function DiseaseDetector() {
 
   return (
     <div className="p-6 max-w-5xl mx-auto">
-      <div className="mb-6">
-        <h1 className="text-2xl font-serif font-medium text-gray-900">
-          Crop Disease Detector
-        </h1>
-        <p className="text-sm text-gray-400 mt-1">
-          Upload a photo of your crop or leaf for instant AI diagnosis
-        </p>
-      </div>
+      <PageHeader
+        title="Crop Disease Detector"
+        subtitle="Upload a photo of your crop or leaf for instant AI diagnosis"
+      />
 
       <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
         {/* Upload Panel */}
-        <div className="bg-white rounded-2xl border border-gray-100 p-5">
+        <Card>
           <div className="flex items-center justify-between mb-4">
             <h2 className="text-sm font-semibold text-gray-700">
               Upload Crop Photo
             </h2>
-            <span className="text-xs bg-teal-50 text-teal-700 px-2 py-0.5 rounded-full">
-              AI Vision
-            </span>
+            <Badge tone="teal">AI Vision</Badge>
           </div>
 
           {!preview ? (
@@ -149,20 +150,12 @@ export default function DiseaseDetector() {
             onChange={(e) => handleFile(e.target.files[0])}
           />
 
-          {error && (
-            <div className="bg-red-50 text-red-700 text-xs px-4 py-3 rounded-lg mt-4 border border-red-100">
-              {error}
-            </div>
-          )}
+          <ErrorBanner className="mt-4">{error}</ErrorBanner>
 
           {file && !result && (
-            <button
-              onClick={detect}
-              disabled={loading}
-              className="w-full mt-4 bg-green-500 hover:bg-green-600 text-white font-medium py-3 rounded-xl text-sm transition-colors disabled:opacity-60"
-            >
+            <Button onClick={detect} disabled={loading} size="lg" className="w-full mt-4">
               {loading ? "Analyzing image..." : "Detect Disease"}
-            </button>
+            </Button>
           )}
 
           {/* Result */}
@@ -185,11 +178,9 @@ export default function DiseaseDetector() {
                     )}
                   </div>
                   {result.severity && (
-                    <span
-                      className={`text-xs px-2 py-0.5 rounded-full ${SEVERITY_COLORS[result.severity] || "bg-gray-100 text-gray-600"}`}
-                    >
+                    <Badge tone={SEVERITY_TONES[result.severity] || "gray"}>
                       {result.severity}
-                    </span>
+                    </Badge>
                   )}
                 </div>
                 {result.cause && (
@@ -239,10 +230,10 @@ export default function DiseaseDetector() {
               </button>
             </div>
           )}
-        </div>
+        </Card>
 
         {/* Recent Detections — real data only */}
-        <div className="bg-white rounded-2xl border border-gray-100 p-5">
+        <Card>
           <h2 className="text-sm font-semibold text-gray-700 mb-4">
             Your Detection History
           </h2>
@@ -250,19 +241,14 @@ export default function DiseaseDetector() {
           {historyLoading ? (
             <div className="flex flex-col gap-3">
               {[1, 2, 3].map((i) => (
-                <div
-                  key={i}
-                  className="h-14 bg-gray-50 rounded-xl animate-pulse"
-                />
+                <Skeleton key={i} className="h-14 bg-gray-50 rounded-xl" />
               ))}
             </div>
           ) : history.length === 0 ? (
-            <div className="flex flex-col items-center justify-center py-12 text-center gap-2">
-              <p className="text-sm text-gray-400">No detections yet</p>
-              <p className="text-xs text-gray-300">
-                Upload a crop photo to get started
-              </p>
-            </div>
+            <EmptyState
+              title="No detections yet"
+              subtitle="Upload a crop photo to get started"
+            />
           ) : (
             <div className="flex flex-col gap-3">
               {history.map((d, i) => (
@@ -282,11 +268,9 @@ export default function DiseaseDetector() {
                       })}
                     </div>
                   </div>
-                  <span
-                    className={`text-xs px-2 py-0.5 rounded-full ${SEVERITY_COLORS[d.severity] || "bg-gray-100 text-gray-600"}`}
-                  >
+                  <Badge tone={SEVERITY_TONES[d.severity] || "gray"}>
                     {d.severity === "None" ? "Healthy" : d.severity || "—"}
-                  </span>
+                  </Badge>
                 </div>
               ))}
             </div>
@@ -310,7 +294,7 @@ export default function DiseaseDetector() {
               ))}
             </div>
           </div>
-        </div>
+        </Card>
       </div>
     </div>
   );

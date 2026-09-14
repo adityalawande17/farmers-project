@@ -14,7 +14,7 @@ const VARIANTS = {
 // beside an input (Send/Ask, header actions), "lg" for full-width primary
 // form-submit CTAs (Login, Register, AddCrop's bottom row).
 const SIZES = {
-  sm: "text-sm py-2",
+  sm: "text-sm px-4 py-2",
   md: "text-sm px-5 py-2.5",
   lg: "text-sm py-3",
 };
