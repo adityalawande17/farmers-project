@@ -2,6 +2,9 @@ import { useState } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
 import { useAuth } from '../context/AuthContext';
 import FarmSlideshow from '../components/FarmSlideshow';
+import Card from '../components/ui/Card';
+import Button from '../components/ui/Button';
+import ErrorBanner from '../components/ui/ErrorBanner';
 
 export default function Login() {
   const { login } = useAuth();
@@ -35,14 +38,10 @@ export default function Login() {
             <p className="text-gray-500 text-sm mt-1">AI-Powered Smart Farming</p>
           </div>
 
-          <div className="bg-white rounded-2xl shadow-sm border border-gray-100 p-8">
+          <Card padding="p-8" className="shadow-sm">
             <h2 className="text-xl font-semibold text-gray-800 mb-6">Welcome back</h2>
 
-            {error && (
-              <div className="bg-red-50 text-red-700 text-sm px-4 py-3 rounded-lg mb-5 border border-red-100">
-                {error}
-              </div>
-            )}
+            <ErrorBanner className="mb-5">{error}</ErrorBanner>
 
             <form onSubmit={handleSubmit} className="flex flex-col gap-4">
               <div>
@@ -67,20 +66,16 @@ export default function Login() {
                   className="w-full px-4 py-2.5 border border-gray-200 rounded-xl text-sm focus:outline-none focus:border-green-400 transition-colors"
                 />
               </div>
-              <button
-                type="submit"
-                disabled={loading}
-                className="w-full bg-green-500 hover:bg-green-600 text-white font-medium py-3 rounded-xl text-sm transition-colors disabled:opacity-60 mt-2"
-              >
+              <Button type="submit" size="lg" disabled={loading} className="w-full mt-2">
                 {loading ? 'Signing in...' : 'Sign In'}
-              </button>
+              </Button>
             </form>
 
             <p className="text-center text-sm text-gray-500 mt-5">
               New farmer?{' '}
               <Link to="/register" className="text-green-600 font-medium hover:underline">Create account</Link>
             </p>
-          </div>
+          </Card>
         </div>
       </div>
 

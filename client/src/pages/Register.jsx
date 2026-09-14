@@ -2,6 +2,9 @@ import { useState } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
 import { useAuth } from '../context/AuthContext';
 import FarmSlideshow from '../components/FarmSlideshow';
+import Card from '../components/ui/Card';
+import Button from '../components/ui/Button';
+import ErrorBanner from '../components/ui/ErrorBanner';
 
 const CROP_OPTIONS = ['Wheat', 'Rice', 'Tomato', 'Onion', 'Potato', 'Cotton', 'Soybean', 'Sugarcane', 'Maize', 'Chilli'];
 const STATES = ['Maharashtra', 'Punjab', 'Haryana', 'Uttar Pradesh', 'Madhya Pradesh', 'Rajasthan', 'Gujarat', 'Karnataka', 'Andhra Pradesh', 'Telangana'];
@@ -74,10 +77,8 @@ export default function Register() {
             ))}
           </div>
 
-          <div className="bg-white rounded-2xl shadow-sm border border-gray-100 p-8">
-            {error && (
-              <div className="bg-red-50 text-red-700 text-sm px-4 py-3 rounded-lg mb-5 border border-red-100">{error}</div>
-            )}
+          <Card padding="p-8" className="shadow-sm">
+            <ErrorBanner className="mb-5">{error}</ErrorBanner>
 
             {/* Step 1: Account */}
             {step === 1 && (
@@ -108,10 +109,13 @@ export default function Register() {
                     {LANGUAGES.map(l => <option key={l.value} value={l.value}>{l.label}</option>)}
                   </select>
                 </div>
-                <button onClick={() => form.name && form.phone && form.password ? setStep(2) : null}
-                  className="w-full bg-green-500 hover:bg-green-600 text-white font-medium py-3 rounded-xl text-sm transition-colors mt-2">
+                <Button
+                  onClick={() => form.name && form.phone && form.password ? setStep(2) : null}
+                  size="lg"
+                  className="w-full mt-2"
+                >
                   Continue →
-                </button>
+                </Button>
               </div>
             )}
 
@@ -143,8 +147,8 @@ export default function Register() {
                     className="w-full px-4 py-2.5 border border-gray-200 rounded-xl text-sm focus:outline-none focus:border-green-400 transition-colors" />
                 </div>
                 <div className="flex gap-3 mt-2">
-                  <button onClick={() => setStep(1)} className="flex-1 border border-gray-200 text-gray-600 font-medium py-3 rounded-xl text-sm hover:bg-gray-50 transition-colors">← Back</button>
-                  <button onClick={() => setStep(3)} className="flex-1 bg-green-500 hover:bg-green-600 text-white font-medium py-3 rounded-xl text-sm transition-colors">Continue →</button>
+                  <Button variant="secondary" size="lg" onClick={() => setStep(1)} className="flex-1">← Back</Button>
+                  <Button size="lg" onClick={() => setStep(3)} className="flex-1">Continue →</Button>
                 </div>
               </div>
             )}
@@ -174,11 +178,10 @@ export default function Register() {
                 </div>
 
                 <div className="flex gap-3 mt-2">
-                  <button onClick={() => setStep(2)} className="flex-1 border border-gray-200 text-gray-600 font-medium py-3 rounded-xl text-sm hover:bg-gray-50 transition-colors">← Back</button>
-                  <button onClick={handleSubmit} disabled={loading}
-                    className="flex-1 bg-green-500 hover:bg-green-600 text-white font-medium py-3 rounded-xl text-sm transition-colors disabled:opacity-60">
+                  <Button variant="secondary" size="lg" onClick={() => setStep(2)} className="flex-1">← Back</Button>
+                  <Button size="lg" onClick={handleSubmit} disabled={loading} className="flex-1">
                     {loading ? 'Getting location...' : 'Create Account'}
-                  </button>
+                  </Button>
                 </div>
               </div>
             )}
@@ -187,7 +190,7 @@ export default function Register() {
               Already have an account?{' '}
               <Link to="/login" className="text-green-600 font-medium hover:underline">Sign in</Link>
             </p>
-          </div>
+          </Card>
         </div>
       </div>
 

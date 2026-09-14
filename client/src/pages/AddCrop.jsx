@@ -2,6 +2,10 @@ import { useState } from "react";
 import { useNavigate } from "react-router-dom";
 import axios from "axios";
 import { API } from "../context/AuthContext";
+import PageHeader from "../components/ui/PageHeader";
+import Card from "../components/ui/Card";
+import Button from "../components/ui/Button";
+import ErrorBanner from "../components/ui/ErrorBanner";
 
 const CROP_NAMES = [
   "Wheat",
@@ -97,28 +101,17 @@ export default function AddCrop() {
 
   return (
     <div className="p-6 max-w-2xl mx-auto">
-      <div className="mb-6">
-        <h1 className="text-2xl font-serif font-medium text-gray-900">
-          Add New Crop
-        </h1>
-        <p className="text-sm text-gray-400 mt-1">
-          Track your crop from sowing to harvest
-        </p>
-      </div>
+      <PageHeader title="Add New Crop" subtitle="Track your crop from sowing to harvest" />
 
-      {error && (
-        <div className="bg-red-50 text-red-700 text-sm px-4 py-3 rounded-xl mb-5 border border-red-100">
-          {error}
-        </div>
-      )}
+      <ErrorBanner className="mb-5">{error}</ErrorBanner>
 
       <form onSubmit={handleSubmit} className="flex flex-col gap-5">
         {/* Crop Info */}
-        <div className="bg-white rounded-2xl border border-gray-100 p-5">
+        <Card>
           <h2 className="text-sm font-semibold text-gray-700 mb-4">
             Crop Details
           </h2>
-          <div className="grid grid-cols-2 gap-4">
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
             <div>
               <label className="block text-xs font-medium text-gray-500 mb-1.5">
                 Crop Name *
@@ -213,10 +206,10 @@ export default function AddCrop() {
               className="w-full px-3 py-2.5 border border-gray-200 rounded-xl text-sm focus:outline-none focus:border-green-400 resize-none"
             />
           </div>
-        </div>
+        </Card>
 
         {/* Expenses */}
-        <div className="bg-white rounded-2xl border border-gray-100 p-5">
+        <Card>
           <div className="flex items-center justify-between mb-4">
             <h2 className="text-sm font-semibold text-gray-700">
               Initial Expenses
@@ -264,7 +257,7 @@ export default function AddCrop() {
 
           {showExpense ? (
             <div className="border border-gray-100 rounded-xl p-4 flex flex-col gap-3">
-              <div className="grid grid-cols-2 gap-3">
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-3">
                 <div>
                   <label className="block text-xs text-gray-500 mb-1">
                     Category
@@ -308,49 +301,46 @@ export default function AddCrop() {
                 className="w-full px-3 py-2 border border-gray-200 rounded-lg text-sm focus:outline-none focus:border-green-400"
               />
               <div className="flex gap-2">
-                <button
-                  type="button"
-                  onClick={addExpense}
-                  className="flex-1 bg-green-500 text-white text-sm py-2 rounded-lg hover:bg-green-600 transition-colors"
-                >
+                <Button type="button" size="sm" onClick={addExpense} className="flex-1">
                   Add
-                </button>
-                <button
+                </Button>
+                <Button
                   type="button"
+                  variant="secondary"
+                  size="sm"
                   onClick={() => setShowExpense(false)}
-                  className="flex-1 border border-gray-200 text-gray-600 text-sm py-2 rounded-lg hover:bg-gray-50 transition-colors"
+                  className="flex-1"
                 >
                   Cancel
-                </button>
+                </Button>
               </div>
             </div>
           ) : (
-            <button
+            <Button
               type="button"
+              variant="dashed"
               onClick={() => setShowExpense(true)}
-              className="w-full border border-dashed border-gray-200 text-gray-500 text-sm py-2.5 rounded-xl hover:border-green-300 hover:text-green-600 transition-colors"
+              className="w-full"
             >
               + Add Expense
-            </button>
+            </Button>
           )}
-        </div>
+        </Card>
 
         {/* Submit */}
         <div className="flex gap-3">
-          <button
+          <Button
             type="button"
+            variant="secondary"
+            size="lg"
             onClick={() => navigate("/")}
-            className="flex-1 border border-gray-200 text-gray-600 font-medium py-3 rounded-xl text-sm hover:bg-gray-50 transition-colors"
+            className="flex-1"
           >
             Cancel
-          </button>
-          <button
-            type="submit"
-            disabled={loading}
-            className="flex-1 bg-green-500 hover:bg-green-600 text-white font-medium py-3 rounded-xl text-sm transition-colors disabled:opacity-60"
-          >
+          </Button>
+          <Button type="submit" size="lg" disabled={loading} className="flex-1">
             {loading ? "Saving..." : "Add Crop"}
-          </button>
+          </Button>
         </div>
       </form>
     </div>

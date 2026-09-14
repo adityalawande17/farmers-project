@@ -4,6 +4,7 @@ import { API, useAuth } from "../context/AuthContext";
 import { getCurrentSeason } from "../utils/season";
 import PageHeader from "../components/ui/PageHeader";
 import Card from "../components/ui/Card";
+import ErrorBanner from "../components/ui/ErrorBanner";
 
 const WEATHER_ICONS = {
   "clear sky": "☀️",
@@ -124,11 +125,7 @@ Answer specifically using the actual forecast data above.`,
       />
 
       {/* Error state */}
-      {weatherError && (
-        <div className="bg-red-50 border border-red-100 text-red-700 text-sm px-4 py-3 rounded-xl mb-6">
-          {weatherError}
-        </div>
-      )}
+      <ErrorBanner className="mb-6">{weatherError}</ErrorBanner>
 
       {/* Loading */}
       {loading && (

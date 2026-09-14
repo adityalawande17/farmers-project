@@ -1,6 +1,8 @@
 import { useState } from "react";
 import axios from "axios";
 import { API } from "../context/AuthContext";
+import Button from "./ui/Button";
+import ErrorBanner from "./ui/ErrorBanner";
 
 const SEASONS = [
   { value: "kharif", label: "Kharif (June–Oct)" },
@@ -149,16 +151,12 @@ export default function EditCropModal({ crop, onClose, onSaved, onDeleted }) {
 
         {/* Body */}
         <div className="flex-1 overflow-y-auto px-6 py-5">
-          {error && (
-            <div className="bg-red-50 text-red-700 text-xs px-4 py-3 rounded-xl mb-4 border border-red-100">
-              {error}
-            </div>
-          )}
+          <ErrorBanner className="mb-4">{error}</ErrorBanner>
 
           {/* ── Details Tab ── */}
           {activeTab === "details" && (
             <div className="flex flex-col gap-4">
-              <div className="grid grid-cols-2 gap-3">
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-3">
                 <div>
                   <label className="block text-xs font-medium text-gray-500 mb-1.5">
                     Crop Name
@@ -292,7 +290,7 @@ export default function EditCropModal({ crop, onClose, onSaved, onDeleted }) {
                       className="w-full px-3 py-2.5 border border-gray-200 rounded-xl text-sm focus:outline-none focus:border-green-400"
                     />
                   </div>
-                  <div className="grid grid-cols-2 gap-3">
+                  <div className="grid grid-cols-1 md:grid-cols-2 gap-3">
                     <div>
                       <label className="block text-xs font-medium text-gray-500 mb-1.5">
                         Yield (kg)
@@ -399,7 +397,7 @@ export default function EditCropModal({ crop, onClose, onSaved, onDeleted }) {
 
               {showExpForm ? (
                 <div className="border border-gray-100 rounded-xl p-4 flex flex-col gap-3">
-                  <div className="grid grid-cols-2 gap-3">
+                  <div className="grid grid-cols-1 md:grid-cols-2 gap-3">
                     <div>
                       <label className="block text-xs text-gray-500 mb-1">
                         Category
@@ -443,27 +441,27 @@ export default function EditCropModal({ crop, onClose, onSaved, onDeleted }) {
                     className="w-full px-3 py-2 border border-gray-200 rounded-lg text-sm focus:outline-none focus:border-green-400"
                   />
                   <div className="flex gap-2">
-                    <button
-                      onClick={addExpense}
-                      className="flex-1 bg-green-500 text-white text-sm py-2 rounded-lg hover:bg-green-600 transition-colors"
-                    >
+                    <Button size="sm" onClick={addExpense} className="flex-1">
                       Add
-                    </button>
-                    <button
+                    </Button>
+                    <Button
+                      variant="secondary"
+                      size="sm"
                       onClick={() => setShowExpForm(false)}
-                      className="flex-1 border border-gray-200 text-gray-600 text-sm py-2 rounded-lg hover:bg-gray-50 transition-colors"
+                      className="flex-1"
                     >
                       Cancel
-                    </button>
+                    </Button>
                   </div>
                 </div>
               ) : (
-                <button
+                <Button
+                  variant="dashed"
                   onClick={() => setShowExpForm(true)}
-                  className="w-full border border-dashed border-gray-200 text-gray-400 text-sm py-2.5 rounded-xl hover:border-green-300 hover:text-green-600 transition-colors"
+                  className="w-full"
                 >
                   + Add Expense
-                </button>
+                </Button>
               )}
             </div>
           )}
@@ -499,19 +497,12 @@ export default function EditCropModal({ crop, onClose, onSaved, onDeleted }) {
               >
                 Delete
               </button>
-              <button
-                onClick={onClose}
-                className="flex-1 border border-gray-200 text-gray-600 text-sm py-2.5 rounded-xl hover:bg-gray-50 transition-colors"
-              >
+              <Button variant="secondary" onClick={onClose} className="flex-1">
                 Cancel
-              </button>
-              <button
-                onClick={handleSave}
-                disabled={saving}
-                className="flex-1 bg-green-500 hover:bg-green-600 text-white text-sm font-medium py-2.5 rounded-xl transition-colors disabled:opacity-60"
-              >
+              </Button>
+              <Button onClick={handleSave} disabled={saving} className="flex-1">
                 {saving ? "Saving..." : "Save Changes"}
-              </button>
+              </Button>
             </>
           )}
         </div>
