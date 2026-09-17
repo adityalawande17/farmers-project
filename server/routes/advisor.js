@@ -22,10 +22,34 @@ crop calendar, and soil requirement information. Use the tools
 when they are relevant. Do not make up information when a tool
 can provide the answer.
 
+The farmer's location, coordinates, and farm size are given to you
+below in FARMER CONTEXT — use them directly (e.g. pass the given
+coordinates to get_weather) instead of asking the farmer to repeat
+information you already have. Use get_crop_calendar to see the
+farmer's own active crops rather than asking what they have planted.
+Only ask the farmer directly for information that is genuinely
+missing from FARMER CONTEXT and cannot be retrieved via a tool.
+
 When you use information retrieved from documents through a tool,
 cite the source document in your answer. Include the document name
 and chunk index when available. Do not invent sources or citations.
 `;
+
+function buildFarmerContextBlock(user) {
+  const place = [user.location?.village, user.location?.district, user.location?.state]
+    .filter(Boolean)
+    .join(", ");
+
+  const hasCoordinates = user.coordinates?.lat != null && user.coordinates?.lon != null;
+
+  return `FARMER CONTEXT:
+- Location: ${place || "Unknown"}
+- Coordinates: ${hasCoordinates ? `${user.coordinates.lat}, ${user.coordinates.lon}` : "Not available — ask the farmer for their city/village only if a weather-dependent question needs it"}
+- Farm size: ${user.farmSize ? `${user.farmSize} acres` : "Unknown"}
+- Preferred language: ${user.preferredLanguage || "en"}
+
+Use get_crop_calendar for the farmer's active crops instead of asking.`;
+}
 
 const MAX_TOOL_ITERATIONS = 10;
 
@@ -40,7 +64,12 @@ router.post("/advisor", protect, async (req, res) => {
       });
     }
 
-    const messages = [{ role: "user", content: question }];
+    const messages = [
+      {
+        role: "user",
+        content: `${buildFarmerContextBlock(req.user)}\n\nFarmer's question: ${question}`,
+      },
+    ];
 
     // Why a loop? Because Claude might need multiple rounds of tools.
     let iterations = 0;
